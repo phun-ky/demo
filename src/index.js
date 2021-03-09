@@ -1,32 +1,7 @@
-/* eslint no-console: 0 */
-
+/* eslint no-console:0 */
 'use strict';
-
-console.clear();
-
-const rgb2hex = rgb => {
-  rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-  const hex = x => {
-    return ('0' + parseInt(x).toString(16)).slice(-2);
-  };
-  return '#' + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
-};
-
-const debounce = function (func, wait, immediate) {
-  var timeout;
-  return function () {
-    var context = this,
-      args = arguments;
-    var later = function () {
-      timeout = null;
-      if (!immediate) func.apply(context, args);
-    };
-    var callNow = immediate && !timeout;
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-    if (callNow) func.apply(context, args);
-  };
-};
+import humanizeString from 'humanize-string';
+import { rgb2hex, debounce } from './helpers';
 
 const settingsMenuInit = () => {
   const settingsMenuTriggers = document.querySelectorAll('.ph.js-settings-menu');
@@ -166,336 +141,6 @@ const settingsMenuInit = () => {
     settingsMenuTrigger.addEventListener('keyup', handleOverflowMenuKeypress);
   });
 };
-
-// MIT © Sindre Sorhus
-const handlePreserveConsecutiveUppercase = (decamelized, separator) => {
-  // Lowercase all single uppercase characters. As we
-  // want to preserve uppercase sequences, we cannot
-  // simply lowercase the separated string at the end.
-  // `data_For_USACounties` → `data_for_USACounties`
-  decamelized = decamelized.replace(
-    /((?<![\p{Uppercase_Letter}\d])[\p{Uppercase_Letter}\d](?![\p{Uppercase_Letter}\d]))/gu,
-    $0 => {
-      return $0.toLowerCase();
-    }
-  );
-
-  // Remaining uppercase sequences will be separated from lowercase sequences.
-  // `data_For_USACounties` → `data_for_USA_counties`
-  return decamelized.replace(/(\p{Uppercase_Letter}+)(\p{Uppercase_Letter}\p{Lowercase_Letter}+)/gu, (_, $1, $2) => {
-    return $1 + separator + $2.toLowerCase();
-  });
-};
-
-const decamelize = (text, { separator = '_', preserveConsecutiveUppercase = false } = {}) => {
-  if (!(typeof text === 'string' && typeof separator === 'string')) {
-    throw new TypeError('The `text` and `separator` arguments should be of type `string`');
-  }
-
-  // Checking the second character is done later on. Therefore process shorter strings here.
-  if (text.length < 2) {
-    return preserveConsecutiveUppercase ? text : text.toLowerCase();
-  }
-
-  const replacement = `$1${separator}$2`;
-
-  // Split lowercase sequences followed by uppercase character.
-  // `dataForUSACounties` → `data_For_USACounties`
-  // `myURLstring → `my_URLstring`
-  const decamelized = text.replace(/([\p{Lowercase_Letter}\d])(\p{Uppercase_Letter})/gu, replacement);
-
-  if (preserveConsecutiveUppercase) {
-    return handlePreserveConsecutiveUppercase(decamelized, separator);
-  }
-
-  // Split multiple uppercase characters followed by one or more lowercase characters.
-  // `my_URLstring` → `my_url_string`
-  return decamelized
-    .replace(/(\p{Uppercase_Letter}+)(\p{Uppercase_Letter}\p{Lowercase_Letter}+)/gu, replacement)
-    .toLowerCase();
-};
-
-const humanizeString = input => {
-  if (typeof input !== 'string') {
-    throw new TypeError('Expected a string');
-  }
-
-  input = decamelize(input);
-  input = input
-    .toLowerCase()
-    .replace(/[_-]+/g, ' ')
-    .replace(/\s{2,}/g, ' ')
-    .trim();
-  input = input.charAt(0).toUpperCase() + input.slice(1);
-
-  return input;
-};
-
-/***
-
-MIT License
-
-Copyright (c) 2018 Alexander Vassbotn Røyne-Helgesen
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-
-**/
-
-document.querySelector('html').classList.add('ph');
-document.querySelector('body').classList.add('ph');
-//
-// const TEST_CONFIG = {
-//   preset: true,
-//   ui: false,
-//   position: 'center',
-//   name: 'Button',
-//   // Markup could be a file or a raw markup string
-//   markup: '<button type="button" class="if button">Sjekk din pris</button>',
-//   backgrounds: [
-//     {
-//       name: 'BE 5',
-//       color: '#faf9f7'
-//     }
-//   ],
-//   variants: [
-//     {
-//       name: 'Primary button',
-//       classNames: 'primary'
-//     }
-//   ]
-// };
-
-const TEST_CONFIG = {
-  position: 'center',
-  name: 'Button',
-  html: true,
-  label: 'Click me',
-  css: 'https://if-vid-brand-cdn.azureedge.net/ifdesignsystem.min.css',
-  js: 'https://unpkg.com/what-input@5.2.10/dist/what-input.js',
-  // Markup could be a file or a raw markup string
-  markup: '<button type="button" class="if button"></button>',
-  backgrounds: [
-    {
-      name: 'BE 5',
-      color: '#faf9f7'
-    },
-    {
-      name: 'BE 4',
-      color: '#f6f3f0'
-    },
-    {
-      name: 'BE 3',
-      color: '#f1ece8'
-    },
-    {
-      name: 'BE 2',
-      color: '#ede6e1'
-    },
-    {
-      name: 'BE 1',
-      color: '#e8e0d9'
-    }
-  ],
-  variants: [
-    {
-      name: 'Primary button',
-      classNames: 'primary',
-      modifiers: [
-        {
-          name: 'Large',
-          classNames: 'large',
-          group: 'size'
-        },
-        {
-          name: 'With icon left',
-          markup: '<span aria-hidden="true" class="if icon ui trashcan white"></span>',
-          position: 'before',
-          group: 'markup'
-        },
-        {
-          name: 'With icon right',
-          markup:
-            '<span aria-hidden="true" class="if icon ui arrow-right white" style="margin-right: 0;margin-left: 16px;"></span>',
-          position: 'after',
-          group: 'markup'
-        }
-      ]
-    },
-    {
-      name: 'Secondary button',
-      classNames: 'secondary',
-      modifiers: [
-        {
-          name: 'With icon',
-          markup: '<span aria-hidden="true" class="if icon ui trashcan blue"></span>',
-          position: 'before',
-          group: 'markup'
-        }
-      ]
-    },
-    {
-      name: 'Tertiary button',
-      classNames: 'tertiary',
-      modifiers: [
-        {
-          name: 'With icon',
-          markup: '<span aria-hidden="true" class="if icon ui trashcan blue"></span>',
-          position: 'before',
-          group: 'markup'
-        }
-      ]
-    },
-    {
-      name: 'Info button',
-      classNames: 'info',
-      modifiers: [
-        {
-          name: 'With icon',
-          markup: '<span aria-hidden="true" class="if icon ui trashcan white"></span>',
-          position: 'before',
-          group: 'markup'
-        }
-      ]
-    }
-  ],
-  states: [
-    {
-      name: 'Disabled',
-      attributes: {
-        disabled: 'disabled'
-      }
-    }
-  ],
-  interactions: [
-    {
-      name: 'Hovered',
-      classNames: 'is-hovered'
-    },
-    {
-      name: 'Focused',
-      classNames: 'is-focused',
-      previewAttributes: {
-        'data-whatinput': 'keyboard'
-      }
-    },
-    {
-      name: 'Active',
-      classNames: 'is-active'
-    }
-  ]
-};
-// const TEST_CONFIG = {
-//   position: 'center',
-//   name: 'Avatar',
-//   // Markup could be a file or a raw markup string
-//   markup: '<span class="if avatar"></span>',
-//   backgrounds: [
-//     {
-//       name: 'BE 5',
-//       color: '#faf9f7'
-//     },
-//     {
-//       name: 'BE 4',
-//       color: '#f6f3f0'
-//     },
-//     {
-//       name: 'BE 3',
-//       color: '#f1ece8'
-//     },
-//     {
-//       name: 'BE 2',
-//       color: '#ede6e1'
-//     },
-//     {
-//       name: 'BE 1',
-//       color: '#e8e0d9'
-//     }
-//   ],
-//   variants: [
-//     {
-//       name: 'Default',
-//       classNames: 'default'
-//     },
-//     {
-//       name: 'Image',
-//       classNames: 'noop',
-//       styles: [
-//         {
-//           key: 'backgroundImage',
-//           value: 'url(https://thispersondoesnotexist.com/image)'
-//         }
-//       ]
-//     },
-//     {
-//       name: 'Initials',
-//       attributes: [
-//         {
-//           key: 'data-initials',
-//           value: 'AVR'
-//         }
-//       ],
-//       modifiers: [
-//         { name: 'Default', classNames: 'noop', group: 'color' },
-//         { name: 'darkRed', classNames: 'darkRed', group: 'color' },
-//         { name: 'red', classNames: 'red', group: 'color' },
-//         { name: 'lightRed', classNames: 'lightRed', group: 'color' },
-//         { name: 'darkYellow', classNames: 'darkYellow', group: 'color' },
-//         { name: 'yellow', classNames: 'yellow', group: 'color' },
-//         { name: 'lightYellow', classNames: 'lightYellow', group: 'color' },
-//         { name: 'darkGreen', classNames: 'darkGreen', group: 'color' },
-//         { name: 'green', classNames: 'green', group: 'color' },
-//         { name: 'lightGreen', classNames: 'lightGreen', group: 'color' },
-//         { name: 'darkBlue', classNames: 'darkBlue', group: 'color' },
-//         { name: 'blue', classNames: 'blue', group: 'color' },
-//         { name: 'lightBlue', classNames: 'lightBlue', group: 'color' }
-//       ]
-//     }
-//   ],
-//   modifiers: [
-//     {
-//       name: 'Default',
-//       classNames: 'noop',
-//       group: 'size'
-//     },
-//     {
-//       name: 'Small',
-//       classNames: 'small',
-//       group: 'size'
-//     },
-//     {
-//       name: 'Large',
-//       classNames: 'large',
-//       group: 'size'
-//     },
-//     {
-//       name: 'Larger',
-//       classNames: 'larger',
-//       group: 'size'
-//     },
-//     {
-//       name: 'Largest',
-//       classNames: 'largest',
-//       group: 'size'
-//     }
-//   ]
-// };
 
 const setDefaultOpts = opts => {
   let defaultOpts = {
@@ -1219,7 +864,7 @@ const createModifierRadioFactory = ({ component, opts, selectionControls, varian
   selectionControls.appendChild(label);
 };
 
-const createModifierToggleFactory = ({ component, opts, selectionControls, variant }) => (modifier, index) => {
+const createModifierToggleFactory = ({ component, opts, selectionControls, variant }) => modifier => {
   const { name, group } = modifier;
   const _id = ID();
   const label = document.createElement('label');
@@ -1367,7 +1012,7 @@ const createStates = ({ form, states, component, opts }) => {
 
   selectionControls.classList.add('ph');
   selectionControls.classList.add('selection-controls');
-  states.forEach((state, index) => {
+  states.forEach(state => {
     const _id = ID();
     const label = document.createElement('label');
     label.classList.add('ph');
@@ -1413,7 +1058,7 @@ const createInteractions = ({ form, interactions, component, opts }) => {
 
   selectionControls.classList.add('ph');
   selectionControls.classList.add('selection-controls');
-  interactions.forEach((interaction, index) => {
+  interactions.forEach(interaction => {
     const _id = ID();
     const label = document.createElement('label');
     label.classList.add('ph');
@@ -1442,18 +1087,6 @@ const createInteractions = ({ form, interactions, component, opts }) => {
   form.appendChild(fragment);
 };
 
-const createInteraction = (interaction, index) => {
-  const fragment = document.createDocumentFragment();
-  const label = document.createElement('label');
-  const input = document.createElement('input');
-  input.setAttribute('type', 'checkbox');
-
-  label.textContent = interaction.name;
-
-  fragment.appendChild(label);
-  fragment.appendChild(input);
-  return fragment;
-};
 const setConfigurationDrawer = (component, el, opts) => {
   const title = document.createElement('span');
   el.appendChild(initVariantsForm());
@@ -1800,7 +1433,20 @@ const loadJSFile = opts => {
     document.head.appendChild(script);
   }
 };
+
+const getConfiguration = cfg => {
+  if (cfg) return cfg;
+
+  const jsCfgEl = document.querySelector('script.js-demo-config');
+  if (!jsCfgEl) throw 'No js config element found';
+
+  const configHTML = jsCfgEl.innerHTML;
+
+  const config = JSON.parse(configHTML);
+  return config;
+};
 const init = cfg => {
+  cfg = cfg || getConfiguration(cfg);
   const options = setDefaultOpts(cfg);
   const el = setDefaultUI(options);
   loadFonts();
@@ -1832,4 +1478,4 @@ const init = cfg => {
   }
 };
 
-init(TEST_CONFIG);
+init();

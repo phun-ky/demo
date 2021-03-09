@@ -63,5 +63,8 @@
     "gulp-rename": "^1.4.0",
     "gulp-sourcemaps": "^2.6.4",
     "gulp-stylus": "^2.7.0"
+  },
+  "dependencies": {
+    "humanize-string": "^2.1.0"
   }
 }
