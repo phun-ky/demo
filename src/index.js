@@ -1433,7 +1433,7 @@ const getConfiguration = cfg => {
 
   const configHTML = jsCfgEl.innerHTML;
 
-  const config = JSON.parse(JSON.stringify(configHTML));
+  const config = JSON.parse(configHTML);
   return config;
 };
 const init = cfg => {
@@ -1468,5 +1468,7 @@ const init = cfg => {
     console.info('[init]: No markup found. Please supply markup');
   }
 };
+
+export default init;
 
 init();
