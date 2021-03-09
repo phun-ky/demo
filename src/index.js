@@ -1433,7 +1433,7 @@ const getConfiguration = cfg => {
 
   const configHTML = jsCfgEl.innerHTML;
 
-  const config = JSON.parse(configHTML);
+  const config = JSON.parse(JSON.stringify(configHTML));
   return config;
 };
 const init = cfg => {
