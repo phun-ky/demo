@@ -1,7 +1,5 @@
 /* eslint no-console:0 */
-'use strict';
-import humanizeString from 'humanize-string';
-import { rgb2hex, debounce } from './helpers';
+import { rgb2hex, debounce, humanizeString } from './helpers';
 
 const settingsMenuInit = () => {
   const settingsMenuTriggers = document.querySelectorAll('.ph.js-settings-menu');
@@ -173,8 +171,6 @@ const getInteraction = (opts, interaction) => opts.interactions.find(i => i.name
 const getState = (opts, state) => opts.states.find(i => i.name == state);
 const getModifier = (modifiers, modifier) => modifiers.find(i => i.name == modifier);
 const getVariant = (opts, variant) => opts.variants.find(i => i.name == variant);
-
-const demo = document.querySelector('.demo');
 
 const clear = el => {
   const cNode = el.cloneNode(false);
@@ -1312,12 +1308,6 @@ const initHtml = () => {
 const setDefaultUI = opts => {
   const el = document.querySelector('.ph.demo');
 
-  if (!el) {
-    const demo = document.createElement('div');
-    demo.classList.add('ph');
-    demo.classList.add('demo');
-  }
-
   const container = document.createElement('div');
   container.classList.add('ph');
   container.classList.add('container');
@@ -1386,10 +1376,11 @@ const setDefaultUI = opts => {
   container.appendChild(preview);
 
   if (!el) {
-    const df = document.createDocumentFragment();
-    df.appendChild(demo);
-    document.appendChild(df);
-    return df;
+    const demo = document.createElement('div');
+    demo.classList.add('ph');
+    demo.classList.add('demo');
+    document.appendChild(demo);
+    return demo;
   }
   el.appendChild(container);
   return el;
