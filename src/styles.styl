@@ -1,0 +1,805 @@
+html.ph
+  min-height 100%
+  /* Prevent adjustments of font size after orientation changes in iOS. */
+  -webkit-text-size-adjust 100%
+  background #c1c1c1
+  font-size 1.125rem
+  line-height 1.75rem
+  letter-spacing normal
+
+
+body.ph
+  box-sizing border-box
+  min-height 100vh
+
+*.ph,
+*.ph:before,
+*.ph:after
+  box-sizing border-box
+  margin 0
+  padding 0
+  font-family "Roboto", "Helvetica Neue", helvetica, sans-serif
+
+
+.ph:focus
+  outline 2pt solid #ff9900
+
+
+.ph.menu
+  background-color #fff
+  color #000000
+  position absolute
+  z-index 100
+  list-style none
+  min-width 18rem
+  border-radius 0
+  display none
+  border 1px solid #c1c1c1
+  transform-origin right center
+  max-width 320px
+  box-shadow 0 5px 10px 0 rgba(0,0,0,0.05)
+
+.ph.menu.is-open
+  display flex
+  animation openX 0.3s cubic-bezier(0.4, 0, 0.2, 1)
+
+.ph.menu.right
+  right 0
+  transform-origin left center
+
+.ph.menu li.is-parent > .ph.menu.left
+  left auto
+  right 100%
+
+.ph.menu li.is-parent > .ph.menu.right
+  left 100%
+  right auto
+
+.ph.menu.left
+  left 0
+  transform-origin right center
+
+.ph.menu.center
+  right auto
+  left auto
+  transform-origin center top
+
+.ph.menu > ul
+  list-style none
+  flex-direction column
+  justify-content flex-start
+  margin 0
+  background-color #fff
+  z-index 100
+  border-radius 0
+  flex-grow 1
+  padding 1rem 0
+  min-width 7rem
+  position absolute
+
+.ph.menu ul li
+  margin-bottom 0
+  padding 0
+  justify-content flex-start
+
+.ph.menu > ul
+  position relative
+
+.ph.menu > ul.is-open,
+.ph.menu.is-open > ul
+  transform-origin 100% 0
+  animation openY 0.4s cubic-bezier(0.4, 0, 0.2, 1)
+
+.ph.menu.left ul.is-open
+  transform-origin 100% 0
+  animation openY 0.4s cubic-bezier(0.4, 0, 0.2, 1)
+
+.ph.menu.right ul.is-open
+  transform-origin 100% 0
+  animation openY 0.4s cubic-bezier(0.4, 0, 0.2, 1)
+
+.ph.menu.center.is-open
+  animation openY 0.4s cubic-bezier(0.4, 0, 0.2, 1)
+
+.ph.menu.center ul.is-open
+  transform-origin center top
+  animation openX 0.2s cubic-bezier(0.4, 0, 0.2, 1)
+
+.ph.menu li
+  display flex
+  align-items center
+  justify-content center
+  min-width 10rem
+  position relative
+
+.ph.menu li.separator
+  padding 0
+  margin 0.5rem 1.5rem
+  pointer-events none
+  border-top 1px solid #c1c1c1
+
+.ph.menu li > a,
+.ph.menu li > button
+  font-family "Roboto", sans-serif
+  font-weight 400
+  font-size 1.125rem
+  line-height 1.5rem
+  letter-spacing normal
+  color #000000
+  text-decoration none
+  position relative
+  width 100%
+  white-space nowrap
+  padding-top 0
+  padding-bottom 0
+  height 40px
+  cursor pointer
+  line-height 40px
+  text-overflow ellipsis
+  border none
+  background-color transparent
+  text-align left
+  display flex
+  align-items center
+  justify-content flex-start
+  flex-grow 0
+  flex-shrink 0
+  padding-right 1.5rem
+  text-decoration none
+  overflow hidden
+  padding-left 1.5rem
+  transition all 0.2s cubic-bezier(0.4, 0, 0.2, 1)
+
+.ph.menu li > a.is-active,
+.ph.menu li > button.is-active
+  font-family "Roboto", sans-serif
+  font-weight 700
+  background-image url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ctitle%3Echeck%3C/title%3E%3Cg class=%27nc-icon-wrapper%27 stroke-linecap=%27square%27 stroke-linejoin=%27miter%27 stroke-width=%272%27 fill=%27%23000000%27 stroke=%27%23000000%27%3E%3Cpolyline points=%272 16 11 25 30 6%27 fill=%27none%27 stroke=%27%23000000%27 stroke-miterlimit=%2710%27/%3E%3C/g%3E%3C/svg%3E")
+  background-repeat no-repeat
+  background-position center center
+  background-size 16px 16px
+  background-repeat no-repeat
+  background-size 1.25rem 1.25rem
+  background-position right 1.5rem center
+
+.ph.menu li > a[disabled],
+.ph.menu li > button[disabled]
+  font-family "Roboto", sans-serif
+  font-weight 400
+  opacity 0.4
+  pointer-events none
+
+.ph.menu li > a:hover,
+.ph.menu li > a:active,
+.ph.menu li > a.is-hovered,
+.ph.menu li > button.is-hovered,
+.ph.menu li > button:hover,
+.ph.menu li > button:active
+  background-color #fff
+  color #000000
+  text-decoration none
+
+.ph.menu li > .ph.menu
+  top 0
+
+nav.ph.menu li.is-parent > a,
+nav.ph.menu li.is-parent > button
+  padding-left 3rem
+  padding-right 1.5rem
+
+nav.ph.menu li.is-parent > a:after,
+nav.ph.menu li.is-parent > button:after
+  content ""
+  height 1.5rem
+  width 1.5rem
+  display block
+  position absolute
+  top 50%
+  transform translateY(-50%)
+  left 1rem
+  background-image url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ctitle%3Esmall left%3C/title%3E%3Cg class=%27nc-icon-wrapper%27 stroke-linecap=%27square%27 stroke-linejoin=%27miter%27 stroke-width=%272%27 fill=%27%23000000%27 stroke=%27%23000000%27%3E%3Cpolyline fill=%27none%27 stroke=%27%23000000%27 stroke-miterlimit=%2710%27 points=%2719,22 13,16 19,10 %27/%3E%3C/g%3E%3C/svg%3E")
+  background-repeat no-repeat
+  background-position center center
+  background-size 16px 16px
+  background-position center center
+  background-repeat no-repeat
+  background-size 1.5rem 1.5rem
+
+nav.ph.menu li.is-parent.right > a,
+nav.ph.menu li.is-parent.right > button
+  padding-left 1.5rem
+  padding-right 3rem
+
+nav.ph.menu li.is-parent.right > a:after,
+nav.ph.menu li.is-parent.right > button:after
+  content ""
+  height 1.5rem
+  width 1.5rem
+  display block
+  position absolute
+  top 50%
+  transform translateY(-50%)
+  left auto
+  right 1rem
+  background-image url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ctitle%3Esmall right%3C/title%3E%3Cg class=%27nc-icon-wrapper%27 stroke-linecap=%27square%27 stroke-linejoin=%27miter%27 stroke-width=%272%27 fill=%27%23000000%27 stroke=%27%23000000%27%3E%3Cpolyline fill=%27none%27 stroke=%27%23000000%27 stroke-miterlimit=%2710%27 points=%2713,10 19,16 13,22 %27/%3E%3C/g%3E%3C/svg%3E")
+  background-repeat no-repeat
+  background-position center center
+  background-size 16px 16px
+  background-repeat no-repeat
+  background-position center center
+  background-size 1.5rem 1.5rem
+
+.ph.menu li.is-parent.is-active > a,
+.ph.menu li.is-parent.is-active > button
+  background-color #fff
+  color #000000
+  font-family "Roboto", sans-serif
+  font-weight 700
+
+
+
+@keyframes openXPinnedTopCenter
+  0%
+    display none
+    opacity 0
+
+  1%
+    display flex
+    opacity 0
+    transform scaleX(0) translateX(-50%)
+
+  50%
+    display flex
+    transform scaleX(1) translateX(-50%)
+
+  100%
+    opacity 1
+    display flex
+    transform scaleX(1) translateX(-50%)
+
+@keyframes openX
+  0%
+    display none
+    opacity 0
+
+  1%
+    display flex
+    opacity 0
+    transform scaleX(0)
+
+  50%
+    display flex
+    transform scaleX(1)
+
+  100%
+    opacity 1
+    display flex
+    transform scaleX(1)
+
+@keyframes openY
+  0%
+    display none
+    opacity 0
+
+  1%
+    display flex
+    opacity 0
+    transform scaleY(0)
+
+  100%
+    opacity 1
+    display flex
+    transform scaleY(1)
+
+
+
+.ph.selection-controls
+  font-family "Roboto", "Helvetica Neue", Helvetica, sans-serif
+  font-weight 400
+  font-size 1.125rem
+  flex-direction column
+  align-items flex-start
+  display flex
+  flex-wrap wrap
+  position relative
+  justify-content center
+  min-height 3.5rem
+
+.ph.selection-controls.horizontal
+  flex-direction row
+  align-items center
+  justify-content flex-start
+
+.ph.selection-controls > label
+  display flex
+  flex-grow 0
+  padding 0
+  position relative
+  margin-bottom 1rem
+  width 100%
+
+.ph.selection-controls.horizontal > label
+  margin-bottom 0
+  margin-right 1rem
+  width auto
+
+.ph.selection-controls:focus-within [type="radio"]:disabled + label,
+.ph.selection-controls:focus-within [type="checkbox"]:disabled + label
+  color rgba(0,0,0,0.4)
+
+.ph.selection-control.standalone[type="radio"] + label,
+.ph.selection-control.standalone[type="checkbox"] + label
+  height 28px
+  width 28px
+
+.ph.selection-control.standalone[type="radio"] + label:before,
+.ph.selection-control.standalone[type="checkbox"] + label:before
+  margin-right 0
+
+.ph.selection-control[type="radio"] + label:before
+  border-radius 100%
+
+.ph.selection-control[type="radio"]:checked + label:before
+  background-color green
+  box-shadow inset 0 0 0 1px #000000, inset 0 0 0 7px #e1e1e1
+
+.ph.selection-control[type="radio"]:checked:disabled + label:before
+  background-color transparent
+  background-image none
+  box-shadow inset 0 0 0 1px rgba(0,0,0,0.3), inset 0 0 0 7px rgba(0,0,0,0.3)
+
+.ph.selection-control[type="radio"]:checked:invalid:not(:required) + label:before
+  background-color red
+  box-shadow inset 0 0 0 1px red, inset 0 0 0 7px #e1e1e1
+
+.ph.selection-control[type="radio"].is-invalid:checked + label:before
+  background-color red
+  box-shadow inset 0 0 0 1px red, inset 0 0 0 7px #e1e1e1
+
+.ph.selection-control[type="radio"].is-disabled:checked + label:before
+  background-color transparent
+  background-image none
+  box-shadow inset 0 0 0 1px rgba(0,0,0,0.3), inset 0 0 0 7px rgba(0,0,0,0.3)
+
+.ph.selection-control[type="radio"]:disabled + label,
+.ph.selection-control[type="radio"].is-disabled + label
+  color rgba(0,0,0,0.4)
+
+.ph.selection-control[type="radio"]:disabled + label:before,
+.ph.selection-control[type="radio"].is-disabled + label:before
+  background-color transparent
+  box-shadow inset 0 0 0 1px rgba(0,0,0,0.3)
+
+.ph.selection-control[type="radio"]:invalid:not(:required) + label:before,
+.ph.selection-control[type="radio"].is-invalid + label:before
+  background-color #e1e1e1
+  box-shadow inset 0 0 0 1px red
+
+.ph.selection-control[type="checkbox"] + label:before
+  border-radius 0
+  background-repeat no-repeat
+  background-position center center
+  background-size 28px 28px
+
+.ph.selection-control[type="checkbox"]:invalid:not(:required) + label:before,
+.ph.selection-control[type="checkbox"].is-invalid + label:before
+  background-color #e1e1e1
+  box-shadow inset 0 0 0 1px red
+
+.ph.selection-control[type="checkbox"]:disabled + label,
+.ph.selection-control[type="checkbox"].is-disabled + label
+  color rgba(0,0,0,0.4)
+
+.ph.selection-control[type="checkbox"]:disabled + label:before,
+.ph.selection-control[type="checkbox"].is-disabled + label:before
+  background-color transparent
+  box-shadow inset 0 0 0 1px rgba(0,0,0,0.3)
+
+.ph.selection-control[type="checkbox"]:checked + label:after
+  content ""
+  border-radius 0
+  background-repeat no-repeat
+  background-position center center
+  background-size 1rem 1rem
+  height 28px
+  width 28px
+  position absolute
+  top 50%
+  left 0
+  transform translateY(-50%)
+  background-color blue
+  background-image url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ctitle%3Echeck%3C/title%3E%3Cg class=%27nc-icon-wrapper%27 stroke-linecap=%27square%27 stroke-linejoin=%27miter%27 stroke-width=%273%27 fill=%27white%27 stroke=%27white%27%3E%3Cpolyline points=%272 16 11 25 30 6%27 fill=%27none%27 stroke=%27white%27 stroke-miterlimit=%2710%27/%3E%3C/g%3E%3C/svg%3E")
+
+.ph.selection-control[type="checkbox"]:checked:disabled + label:before
+  background-color transparent
+  box-shadow inset 0 0 0 1px rgba(0,0,0,0.3)
+
+.ph.selection-control[type="checkbox"]:checked:disabled + label:after
+  background-image url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ctitle%3Echeck%3C/title%3E%3Cg class=%27nc-icon-wrapper%27 stroke-linecap=%27square%27 stroke-linejoin=%27miter%27 stroke-width=%273%27 fill=%27%23a1a1a1e%27 stroke=%27%23a1a1a1e%27%3E%3Cpolyline points=%272 16 11 25 30 6%27 fill=%27none%27 stroke=%27%23a1a1a1e%27 stroke-miterlimit=%2710%27/%3E%3C/g%3E%3C/svg%3E")
+
+.ph.selection-control[type="checkbox"]:checked:invalid:not(:required) + label:before
+  background-color #e1e1e1
+  box-shadow inset 0 0 0 1px red
+
+.ph.selection-control[type="checkbox"]:checked:invalid:not(:required) + label:after
+  background-image url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ctitle%3Echeck%3C/title%3E%3Cg class=%27nc-icon-wrapper%27 stroke-linecap=%27square%27 stroke-linejoin=%27miter%27 stroke-width=%273%27 fill=%27red%27 stroke=%27red%27%3E%3Cpolyline points=%272 16 11 25 30 6%27 fill=%27none%27 stroke=%27red%27 stroke-miterlimit=%2710%27/%3E%3C/g%3E%3C/svg%3E")
+
+.ph.selection-control[type="checkbox"].is-invalid:checked + label:before
+  background-color #e1e1e1
+  box-shadow inset 0 0 0 1px red
+
+.ph.selection-control[type="checkbox"].is-invalid:checked + label:after
+  background-image url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ctitle%3Echeck%3C/title%3E%3Cg class=%27nc-icon-wrapper%27 stroke-linecap=%27square%27 stroke-linejoin=%27miter%27 stroke-width=%273%27 fill=%27red%27 stroke=%27red%27%3E%3Cpolyline points=%272 16 11 25 30 6%27 fill=%27none%27 stroke=%27red%27 stroke-miterlimit=%2710%27/%3E%3C/g%3E%3C/svg%3E")
+
+.ph.selection-control[type="checkbox"].is-disabled:checked + label:before
+  background-color transparent
+  box-shadow inset 0 0 0 1px rgba(0,0,0,0.3)
+
+.ph.selection-control[type="checkbox"].is-disabled:checked + label:after
+  background-image url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ctitle%3Echeck%3C/title%3E%3Cg class=%27nc-icon-wrapper%27 stroke-linecap=%27square%27 stroke-linejoin=%27miter%27 stroke-width=%273%27 fill=%27%23a1a1a1e%27 stroke=%27%23a1a1a1e%27%3E%3Cpolyline points=%272 16 11 25 30 6%27 fill=%27none%27 stroke=%27%23a1a1a1e%27 stroke-miterlimit=%2710%27/%3E%3C/g%3E%3C/svg%3E")
+
+.ph.selection-control[type="radio"],
+.ph.selection-control[type="checkbox"]
+  flex-grow 0
+  height 0
+  left -1000px
+  opacity 0
+  padding 0
+  position absolute
+  width 0
+
+.ph.selection-control[type="radio"] + label,
+.ph.selection-control[type="checkbox"] + label
+  display flex
+  align-items center
+  cursor pointer
+  font-size 1.125rem
+  font-family "Roboto", "Helvetica Neue", Helvetica, sans-serif
+  font-weight 400
+
+.ph.selection-control[type="radio"] + label:before,
+.ph.selection-control[type="checkbox"] + label:before
+  transition all 0.1s cubic-bezier(0.4, 0, 0.2, 1)
+  content ""
+  display block
+  margin-right 0.5rem
+  height 28px
+  width 28px
+  flex-shrink 0
+  flex-grow 0
+  background-color #FFF
+  box-shadow inset 0 0 0 2px #CCC
+  border-radius 0
+
+.ph.toggle[type="checkbox"]
+  flex-grow 0
+  height 0
+  left -1000px
+  opacity 0
+  padding 0
+  position absolute
+  width 0
+
+
+.ph.toggle[type="checkbox"] + label
+  display flex
+  align-items center
+  cursor pointer
+  font-size 1.125rem
+  font-family "Roboto", sans-serif
+  font-weight 400
+  margin-bottom 1rem
+
+.ph.toggle[type="checkbox"]:disabled + label,
+.ph.toggle[type="checkbox"].is-disabled + label
+  color rgba(0,0,0,0.4)
+
+.ph.toggle[type="checkbox"]:disabled + label:after,
+.ph.toggle[type="checkbox"].is-disabled + label:after
+  color rgba(0,0,0,0.4)
+  border-color rgba(0,0,0,0.3)
+  background-color transparent
+
+.ph.toggle[type="checkbox"]:disabled + label:before,
+.ph.toggle[type="checkbox"].is-disabled + label:before
+  background-color transparent
+  box-shadow 0 0 0 1px rgba(0,0,0,0.3) inset
+
+.ph.toggle[type="checkbox"] + label
+  padding-right 4rem
+
+.ph.toggle[type="checkbox"] + label:after
+  content ""
+  z-index 1
+  display block
+  overflow hidden
+  margin-bottom 0
+  cursor pointer
+  height 28px
+  width 48px
+  position absolute
+  top 50%
+  transform translateY(-50%)
+  bottom 0
+  right 0
+  padding 0
+  line-height 28px
+  border 2px solid #ccc
+  border-radius 28px
+  background-color #ccc
+  transition all 0.1s cubic-bezier(0.4, 0, 0.2, 1)
+
+.ph.toggle[type="checkbox"] + label:before
+  content ""
+  z-index 2
+  display block
+  width 20px
+  height 20px
+  flex-shrink 0
+  flex-grow 0
+  margin 0
+  background-color #fff
+  position absolute
+  top 50%
+  transform translateY(-50%)
+  bottom 0
+  right 24px
+  box-shadow 0 0 0 2px #fff inset
+  border-radius 100%
+  transition all 0.1s cubic-bezier(0.4, 0, 0.2, 1)
+
+.ph.toggle[type="checkbox"]:checked + label:after
+  background-color blue
+  border 2px solid blue
+
+.ph.toggle[type="checkbox"]:checked + label:before
+  right 4px
+
+.ph.toggle[type="checkbox"]:checked:disabled + label:after
+  border-color rgba(0,0,0,0.3)
+  background-color rgba(0,0,0,0.3)
+
+.ph.toggle[type="checkbox"]:checked:disabled + label:before
+  background-color rgba(225,225,225,0.3)
+  box-shadow 0 0 0 1px rgba(0,0,0,0.3) inset
+
+.ph.toggle[type="checkbox"].is-disabled:checked + label:after
+  border-color rgba(0,0,0,0.3)
+  background-color rgba(0,0,0,0.3)
+
+.ph.toggle[type="checkbox"].is-disabled:checked + label:before
+  background-color rgba(225,225,225,0.3)
+  box-shadow 0 0 0 1px rgba(0,0,0,0.3) inset
+
+.ph.selection-control[type="radio"]:focus + label,
+.ph.selection-control[type="checkbox"]:focus + label,
+.ph.selection-control[type="radio"].is-focused + label,
+.ph.selection-control[type="checkbox"].is-focused + label
+  outline 2pt solid #ff9900
+  outline-offset 1pt
+
+.ph.toggle[type="checkbox"]:focus + label,
+.ph.toggle[type="checkbox"].is-focused + label
+  outline 2pt solid #ff9900
+  outline-offset 1pt
+
+
+
+fieldset.ph
+  border none
+
+legend.ph
+  margin-bottom 1rem
+  font-weight 700
+  font-weight 500
+  text-transform uppercase
+  border-bottom 1pt solid currentColor
+  width 100%
+  display block
+  padding-bottom 4px
+  margin-top 8px
+
+.ph
+
+  &.demo
+    min-height 100vh
+    flex-direction column
+    width 100%
+    width 100%
+    height 100%
+    box-sizing border-box
+    margin 0
+    padding 0
+    display flex
+    background #c1c1c1
+
+  &.container
+    display flex
+    width 100%
+    height 100%
+    flex-shrink 0
+    flex-grow 1
+
+  &.header
+    height 4rem
+    padding 1rem 2rem
+    width calc(100% - 320px)
+    display flex
+    align-items center
+    background transparent
+    flex-shrink 0
+    position fixed
+    top 0
+    z-index 4
+    left 0
+
+  &.preview
+    background #c1c1c1
+    height auto
+    flex-grow 0
+    flex-shrink 0
+    width calc(100% - 320px)
+    padding-top 4rem
+    display none
+    justify-content center
+    align-items center
+    &.is-active
+      display flex
+    &.no-ui
+      width 100%
+      padding 0
+
+  &.configuration
+    background #efefef
+    overflow-y auto
+    padding 2rem 2rem 4rem 1rem
+    height 100%
+    width 320px
+    z-index 3
+    position fixed
+    top 0
+    right 0
+    border-left 1pt solid #b1b1b1
+
+
+
+.ph.title
+  font-size 24px
+  text-transform uppercase
+  font-weight 300
+  display block
+  margin-bottom 1rem
+
+.ph.menu-container
+  position relative
+  display flex
+
+.ph.menu-container.backgrounds
+  margin-left auto
+
+.ph.button.icon
+  display inline-block
+  border none
+  box-shadow none
+  margin 0
+  padding 0
+  background-repeat no-repeat
+  background-color transparent
+  background-clip border-box
+  background-size 1.5rem 1.5rem
+  user-select none
+  position relative
+  z-index 0
+  cursor pointer
+  height 1.5rem
+  width 1.5rem
+  max-width none
+  min-width 1.5rem
+  flex-grow 0
+  flex-shrink 0
+  text-decoration none
+  transition all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1)
+  overflow hidden
+  text-indent -99999px
+
+.ph.button.icon.backgrounds
+  opacity 0.3
+  background-image url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' stroke-width='3' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%23000' stroke-linecap='square' stroke-miterlimit='10'%3E%3Cpath d='M3 61L61 3'/%3E%3Cpath d='M3 45L45 3' data-color='color-2'/%3E%3Cpath d='M3 29L29 3'/%3E%3Cpath d='M3 13L13 3M19 61l42-42' data-color='color-2'/%3E%3Cpath d='M36 60l24-24'/%3E%3Cpath d='M51 61l10-10' data-color='color-2'/%3E%3C/g%3E%3C/svg%3E")
+
+.ph.button.icon.backgrounds:hover,
+.ph.button.icon.backgrounds:active
+  opacity 1
+
+
+form.ph
+  margin-bottom 2rem
+
+
+select.ph
+  background-color transparent
+  border none
+  height 3rem
+  padding 0 1.25rem 0 0
+  color #000
+  box-shadow none
+  -moz-appearance none
+  -webkit-appearance none
+  appearance none
+  background-image url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ctitle%3Esmall down%3C/title%3E%3Cg class=%27nc-icon-wrapper%27 stroke-linecap=%27square%27 stroke-linejoin=%27miter%27 stroke-width=%272%27 fill=%27%23331e11%27 stroke=%27%23331e11%27%3E%3Cpolyline fill=%27none%27 stroke=%27%23331e11%27 stroke-miterlimit=%2710%27 points=%2722,13 16,19 10,13 %27/%3E%3C/g%3E%3C/svg%3E")
+  background-repeat no-repeat
+  background-position center center
+  background-size 16px 16px
+  background-size 2rem 2rem
+  background-position right 0.75rem center
+  width 100%
+
+
+select.ph.is-disabled,
+select.ph:disabled
+  background-image url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ctitle%3Esmall down%3C/title%3E%3Cg class=%27nc-icon-wrapper%27 stroke-linecap=%27square%27 stroke-linejoin=%27miter%27 stroke-width=%272%27 fill=%27rgba(110,98,94,0.3)%27 stroke=%27rgba(110,98,94,0.3)%27%3E%3Cpolyline fill=%27none%27 stroke=%27rgba(110,98,94,0.3)%27 stroke-miterlimit=%2710%27 points=%2722,13 16,19 10,13 %27/%3E%3C/g%3E%3C/svg%3E")
+  background-repeat no-repeat
+  background-position center center
+  background-size 2rem 2rem
+  background-position right 0.75rem center
+
+select.ph.is-invalid,
+select.ph[invalid]
+  border-color red
+  box-shadow none
+  border-width 2px
+  background-color #e1e1e1
+
+select::-ms-expand
+  display none
+
+
+.ph.html
+  background transparent
+  height auto
+  flex-grow 0
+  flex-shrink 0
+  width calc(100% - 320px)
+  padding-top 4rem
+  display none
+  justify-content center
+  align-items center
+  &.is-active
+    display flex
+  &.no-ui
+    width 100%
+    padding 0
+
+
+.ph.button.text
+  text-transform uppercase
+  font-weight 500
+  font-size 12px
+  background transparent
+  border none
+  padding 0 0.5rem
+  margin 0
+  height 28px
+  cursor pointer
+  opacity 0.3
+  color #000
+
+  &.is-active
+    cursor default
+  &:hover,
+  &.is-active
+    opacity 1
+  + .ph.button.text
+    margin-left 0.5rem
+
+
+.ph.html pre
+  position absolute
+  left 0
+  right 0
+  top 0
+  bottom 0
+  margin 0
+  padding 0
+  padding-top 4rem
+  padding-left 2.5rem
+  background-color transparent
