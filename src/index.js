@@ -1306,7 +1306,15 @@ const initHtml = () => {
 };
 
 const setDefaultUI = opts => {
-  const el = document.querySelector('.ph.demo');
+  let el;
+  el = document.querySelector('.ph.demo');
+  if (!el) {
+    el = document.createElement('div');
+    el.classList.add('ph');
+    el.classList.add('demo');
+
+    document.body.appendChild(el);
+  }
 
   const container = document.createElement('div');
   container.classList.add('ph');
@@ -1375,13 +1383,6 @@ const setDefaultUI = opts => {
 
   container.appendChild(preview);
 
-  if (!el) {
-    const demo = document.createElement('div');
-    demo.classList.add('ph');
-    demo.classList.add('demo');
-    document.appendChild(demo);
-    return demo;
-  }
   el.appendChild(container);
   return el;
 };
