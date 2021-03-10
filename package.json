@@ -9,6 +9,7 @@
   "module": "./dist/demo.esm.js",
   "browser": "./dist/demo.umd.js",
   "scripts": {
+    "version": "npm run build",
     "build": "rm -rf dist/ && rollup -c && gulp",
     "dev": "rm -rf dist/ && rollup -c -w && gulp",
     "test": "npm run build && jest --config jest.config.js",

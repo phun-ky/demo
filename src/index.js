@@ -370,6 +370,7 @@ const setDefaultLabel = (component, opts) => {
 
 const setDefaultBackground = (component, opts) => {
   if (!component) return;
+  console.log({ component });
   const preview = component.closest('.ph.preview');
   if (!preview) return;
   const { backgrounds } = opts;
