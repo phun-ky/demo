@@ -60,7 +60,7 @@ legend.ph
   &.header
     height 4rem
     padding 1rem 2rem
-    width calc(100% - 240px)
+    width 100%
     display flex
     align-items center
     background transparent
@@ -75,7 +75,7 @@ legend.ph
     height auto
     flex-grow 0
     flex-shrink 0
-    width calc(100% - 240px)
+    width 100%
     padding-top 4rem
     display none
     justify-content center
@@ -97,7 +97,20 @@ legend.ph
     position fixed
     top 0
     right 0
+    display none
     border-left 1pt solid rgba(0,0,0,0.2)
+
+@media screen and (min-width: 720px)
+  .ph.configuration
+    display block
+
+@media screen and (min-width: 720px)
+  .ph.preview
+    width calc(100% - 240px)
+
+@media screen and (min-width: 720px)
+  .ph.header
+    width calc(100% - 240px)
 
 
 .ph.menu-container
