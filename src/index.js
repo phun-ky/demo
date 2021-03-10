@@ -1084,12 +1084,7 @@ const createInteractions = ({ form, interactions, component, opts }) => {
 };
 
 const setConfigurationDrawer = (component, el, opts) => {
-  const title = document.createElement('span');
   el.appendChild(initVariantsForm());
-  title.classList.add('ph');
-  title.classList.add('title');
-  title.textContent = 'Features';
-  el.appendChild(title);
 
   el.appendChild(initInteractionsForm());
   el.appendChild(initStatesForm());
@@ -1129,10 +1124,6 @@ const createVariants = (form, variants, component, opts) => {
   inputWrapper.classList.add('ph');
   inputWrapper.classList.add('input-wrapper');
 
-  const title = document.createElement('span');
-  title.classList.add('ph');
-  title.classList.add('title');
-  title.textContent = 'Variants';
   const _id = ID();
   const select = document.createElement('select');
 
@@ -1168,7 +1159,6 @@ const createVariants = (form, variants, component, opts) => {
     initVariantOnChange(select, component, opts);
   });
 
-  form.appendChild(title);
   form.appendChild(select);
 };
 
@@ -1224,7 +1214,7 @@ const createBackgrounds = (el, backgrounds) => {
       const { name, color } = background;
       action.setAttribute('data-name', name);
       action.setAttribute('data-color', color);
-      action.innerHTML = `<span class="if" style="border: 1pt solid #dddddd;display:inline-block;height: 28px; width: 28px; border-radius: 100%;margin-right: $spacing-size-4; background-clip: padding-box;background-color: ${color};margin-right: 8px;"></span> ${name}`;
+      action.innerHTML = `<span class="if" style="border: 1pt solid #dddddd;display:inline-block;height: 24px; width: 24px; border-radius: 100%; background-clip: padding-box;background-color: ${color};margin-right: 8px;"></span> ${name}`;
       li.appendChild(action);
       ul.appendChild(li);
       action.addEventListener('click', e => {

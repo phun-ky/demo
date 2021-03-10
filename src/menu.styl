@@ -1,0 +1,245 @@
+
+.ph.menu
+  background-color #fff
+  color #000000
+  position absolute
+  z-index 100
+  list-style none
+  min-width 18rem
+  border-radius 0
+  display none
+  border 1px solid #c1c1c1
+  transform-origin right center
+  max-width 240px
+  box-shadow 0 5px 10px 0 rgba(0,0,0,0.05)
+
+.ph.menu.is-open
+  display flex
+  animation openX 0.3s cubic-bezier(0.4, 0, 0.2, 1)
+
+.ph.menu.right
+  right 0
+  transform-origin left center
+
+.ph.menu li.is-parent > .ph.menu.left
+  left auto
+  right 100%
+
+.ph.menu li.is-parent > .ph.menu.right
+  left 100%
+  right auto
+
+.ph.menu.left
+  left 0
+  transform-origin right center
+
+.ph.menu.center
+  right auto
+  left auto
+  transform-origin center top
+
+.ph.menu > ul
+  list-style none
+  flex-direction column
+  justify-content flex-start
+  margin 0
+  background-color #fff
+  z-index 100
+  border-radius 0
+  flex-grow 1
+  padding 1rem 0
+  min-width 7rem
+  position absolute
+
+.ph.menu ul li
+  margin-bottom 0
+  padding 0
+  justify-content flex-start
+
+.ph.menu > ul
+  position relative
+
+.ph.menu > ul.is-open,
+.ph.menu.is-open > ul
+  transform-origin 100% 0
+  animation openY 0.4s cubic-bezier(0.4, 0, 0.2, 1)
+
+.ph.menu.left ul.is-open
+  transform-origin 100% 0
+  animation openY 0.4s cubic-bezier(0.4, 0, 0.2, 1)
+
+.ph.menu.right ul.is-open
+  transform-origin 100% 0
+  animation openY 0.4s cubic-bezier(0.4, 0, 0.2, 1)
+
+.ph.menu.center.is-open
+  animation openY 0.4s cubic-bezier(0.4, 0, 0.2, 1)
+
+.ph.menu.center ul.is-open
+  transform-origin center top
+  animation openX 0.2s cubic-bezier(0.4, 0, 0.2, 1)
+
+.ph.menu li
+  display flex
+  align-items center
+  justify-content center
+  min-width 10rem
+  position relative
+
+.ph.menu li.separator
+  padding 0
+  margin 0.5rem 1.5rem
+  pointer-events none
+  border-top 1px solid #c1c1c1
+
+.ph.menu li > a,
+.ph.menu li > button
+  font-family "Roboto", sans-serif
+  font-weight 400
+  font-size 14px
+  letter-spacing normal
+  color #000000
+  text-decoration none
+  position relative
+  width 100%
+  white-space nowrap
+  padding-top 0
+  padding-bottom 0
+  height 28px
+  cursor pointer
+  line-height 28px
+  text-overflow ellipsis
+  border none
+  background-color transparent
+  text-align left
+  display flex
+  align-items center
+  justify-content flex-start
+  flex-grow 0
+  flex-shrink 0
+  padding-right 1.5rem
+  text-decoration none
+  overflow hidden
+  padding-left 1.5rem
+  transition all 0.2s cubic-bezier(0.4, 0, 0.2, 1)
+
+.ph.menu li > a.is-active,
+.ph.menu li > button.is-active
+  font-family "Roboto", sans-serif
+  font-weight 700
+  background-image url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ctitle%3Echeck%3C/title%3E%3Cg class=%27nc-icon-wrapper%27 stroke-linecap=%27square%27 stroke-linejoin=%27miter%27 stroke-width=%272%27 fill=%27%23000000%27 stroke=%27%23000000%27%3E%3Cpolyline points=%272 16 11 25 30 6%27 fill=%27none%27 stroke=%27%23000000%27 stroke-miterlimit=%2710%27/%3E%3C/g%3E%3C/svg%3E")
+  background-repeat no-repeat
+  background-position center center
+  background-size 16px 16px
+  background-repeat no-repeat
+  background-size 1.25rem 1.25rem
+  background-position right 1.5rem center
+
+.ph.menu li > a[disabled],
+.ph.menu li > button[disabled]
+  font-family "Roboto", sans-serif
+  font-weight 400
+  opacity 0.4
+  pointer-events none
+
+.ph.menu li > a:hover,
+.ph.menu li > a:active,
+.ph.menu li > a.is-hovered,
+.ph.menu li > button.is-hovered,
+.ph.menu li > button:hover,
+.ph.menu li > button:active
+  background-color #fff
+  color #000000
+  text-decoration none
+
+.ph.menu li > .ph.menu
+  top 0
+
+nav.ph.menu li.is-parent > a,
+nav.ph.menu li.is-parent > button
+  padding-left 3rem
+  padding-right 1.5rem
+
+nav.ph.menu li.is-parent > a:after,
+nav.ph.menu li.is-parent > button:after
+  content ""
+  height 1.5rem
+  width 1.5rem
+  display block
+  position absolute
+  top 50%
+  transform translateY(-50%)
+  left 1rem
+  background-image url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ctitle%3Esmall left%3C/title%3E%3Cg class=%27nc-icon-wrapper%27 stroke-linecap=%27square%27 stroke-linejoin=%27miter%27 stroke-width=%272%27 fill=%27%23000000%27 stroke=%27%23000000%27%3E%3Cpolyline fill=%27none%27 stroke=%27%23000000%27 stroke-miterlimit=%2710%27 points=%2719,22 13,16 19,10 %27/%3E%3C/g%3E%3C/svg%3E")
+  background-repeat no-repeat
+  background-position center center
+  background-size 16px 16px
+  background-position center center
+  background-repeat no-repeat
+  background-size 1.5rem 1.5rem
+
+nav.ph.menu li.is-parent.right > a,
+nav.ph.menu li.is-parent.right > button
+  padding-left 1.5rem
+  padding-right 3rem
+
+nav.ph.menu li.is-parent.right > a:after,
+nav.ph.menu li.is-parent.right > button:after
+  content ""
+  height 1.5rem
+  width 1.5rem
+  display block
+  position absolute
+  top 50%
+  transform translateY(-50%)
+  left auto
+  right 1rem
+  background-image url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ctitle%3Esmall right%3C/title%3E%3Cg class=%27nc-icon-wrapper%27 stroke-linecap=%27square%27 stroke-linejoin=%27miter%27 stroke-width=%272%27 fill=%27%23000000%27 stroke=%27%23000000%27%3E%3Cpolyline fill=%27none%27 stroke=%27%23000000%27 stroke-miterlimit=%2710%27 points=%2713,10 19,16 13,22 %27/%3E%3C/g%3E%3C/svg%3E")
+  background-repeat no-repeat
+  background-position center center
+  background-size 16px 16px
+  background-repeat no-repeat
+  background-position center center
+  background-size 1.5rem 1.5rem
+
+.ph.menu li.is-parent.is-active > a,
+.ph.menu li.is-parent.is-active > button
+  background-color #fff
+  color #000000
+  font-family "Roboto", sans-serif
+  font-weight 700
+
+
+@keyframes openX
+  0%
+    display none
+    opacity 0
+
+  1%
+    display flex
+    opacity 0
+    transform scaleX(0)
+
+  50%
+    display flex
+    transform scaleX(1)
+
+  100%
+    opacity 1
+    display flex
+    transform scaleX(1)
+
+@keyframes openY
+  0%
+    display none
+    opacity 0
+
+  1%
+    display flex
+    opacity 0
+    transform scaleY(0)
+
+  100%
+    opacity 1
+    display flex
+    transform scaleY(1)

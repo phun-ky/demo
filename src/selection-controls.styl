@@ -1,0 +1,328 @@
+
+
+
+.ph.selection-controls
+  font-family "Roboto", "Helvetica Neue", Helvetica, sans-serif
+  font-weight 400
+  font-size 14px
+  flex-direction column
+  align-items flex-start
+  display flex
+  flex-wrap wrap
+  position relative
+  justify-content center
+  min-height 28px
+
+.ph.selection-controls.horizontal
+  flex-direction row
+  align-items center
+  justify-content flex-start
+
+.ph.selection-controls > label
+  display flex
+  flex-grow 0
+  padding 0
+  position relative
+  margin-bottom 1rem
+  width 100%
+
+.ph.selection-controls.horizontal > label
+  margin-bottom 0
+  margin-right 1rem
+  width auto
+
+.ph.selection-controls:focus-within [type="radio"]:disabled + label,
+.ph.selection-controls:focus-within [type="checkbox"]:disabled + label
+  color rgba(0,0,0,0.4)
+
+.ph.selection-control.standalone[type="radio"] + label,
+.ph.selection-control.standalone[type="checkbox"] + label
+  height 28px
+  width 28px
+
+.ph.selection-control.standalone[type="radio"] + label:before,
+.ph.selection-control.standalone[type="checkbox"] + label:before
+  margin-right 0
+
+.ph.selection-control[type="radio"] + label:before
+  border-radius 100%
+
+.ph.selection-control[type="radio"]:checked + label:before
+  background-color green
+  box-shadow inset 0 0 0 1px #000000, inset 0 0 0 7px #e1e1e1
+
+.ph.selection-control[type="radio"]:checked:disabled + label:before
+  background-color transparent
+  background-image none
+  box-shadow inset 0 0 0 1px rgba(0,0,0,0.3), inset 0 0 0 7px rgba(0,0,0,0.3)
+
+.ph.selection-control[type="radio"]:checked:invalid:not(:required) + label:before
+  background-color red
+  box-shadow inset 0 0 0 1px red, inset 0 0 0 7px #e1e1e1
+
+.ph.selection-control[type="radio"].is-invalid:checked + label:before
+  background-color red
+  box-shadow inset 0 0 0 1px red, inset 0 0 0 7px #e1e1e1
+
+.ph.selection-control[type="radio"].is-disabled:checked + label:before
+  background-color transparent
+  background-image none
+  box-shadow inset 0 0 0 1px rgba(0,0,0,0.3), inset 0 0 0 7px rgba(0,0,0,0.3)
+
+.ph.selection-control[type="radio"]:disabled + label,
+.ph.selection-control[type="radio"].is-disabled + label
+  color rgba(0,0,0,0.4)
+
+.ph.selection-control[type="radio"]:disabled + label:before,
+.ph.selection-control[type="radio"].is-disabled + label:before
+  background-color transparent
+  box-shadow inset 0 0 0 1px rgba(0,0,0,0.3)
+
+.ph.selection-control[type="radio"]:invalid:not(:required) + label:before,
+.ph.selection-control[type="radio"].is-invalid + label:before
+  background-color #e1e1e1
+  box-shadow inset 0 0 0 1px red
+
+.ph.selection-control[type="checkbox"] + label:before
+  border-radius 0
+  background-repeat no-repeat
+  background-position center center
+  background-size 28px 28px
+
+.ph.selection-control[type="checkbox"]:invalid:not(:required) + label:before,
+.ph.selection-control[type="checkbox"].is-invalid + label:before
+  background-color #e1e1e1
+  box-shadow inset 0 0 0 1px red
+
+.ph.selection-control[type="checkbox"]:disabled + label,
+.ph.selection-control[type="checkbox"].is-disabled + label
+  color rgba(0,0,0,0.4)
+
+.ph.selection-control[type="checkbox"]:disabled + label:before,
+.ph.selection-control[type="checkbox"].is-disabled + label:before
+  background-color transparent
+  box-shadow inset 0 0 0 1px rgba(0,0,0,0.3)
+
+.ph.selection-control[type="checkbox"]:checked + label:after
+  content ""
+  border-radius 0
+  background-repeat no-repeat
+  background-position center center
+  background-size 1rem 1rem
+  height 24px
+  width 24px
+  position absolute
+  top 50%
+  left 0
+  transform translateY(-50%)
+  background-color blue
+  background-image url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ctitle%3Echeck%3C/title%3E%3Cg class=%27nc-icon-wrapper%27 stroke-linecap=%27square%27 stroke-linejoin=%27miter%27 stroke-width=%273%27 fill=%27white%27 stroke=%27white%27%3E%3Cpolyline points=%272 16 11 25 30 6%27 fill=%27none%27 stroke=%27white%27 stroke-miterlimit=%2710%27/%3E%3C/g%3E%3C/svg%3E")
+
+.ph.selection-control[type="checkbox"]:checked:disabled + label:before
+  background-color transparent
+  box-shadow inset 0 0 0 1px rgba(0,0,0,0.3)
+
+.ph.selection-control[type="checkbox"]:checked:disabled + label:after
+  background-image url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ctitle%3Echeck%3C/title%3E%3Cg class=%27nc-icon-wrapper%27 stroke-linecap=%27square%27 stroke-linejoin=%27miter%27 stroke-width=%273%27 fill=%27%23a1a1a1e%27 stroke=%27%23a1a1a1e%27%3E%3Cpolyline points=%272 16 11 25 30 6%27 fill=%27none%27 stroke=%27%23a1a1a1e%27 stroke-miterlimit=%2710%27/%3E%3C/g%3E%3C/svg%3E")
+
+.ph.selection-control[type="checkbox"]:checked:invalid:not(:required) + label:before
+  background-color #e1e1e1
+  box-shadow inset 0 0 0 1px red
+
+.ph.selection-control[type="checkbox"]:checked:invalid:not(:required) + label:after
+  background-image url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ctitle%3Echeck%3C/title%3E%3Cg class=%27nc-icon-wrapper%27 stroke-linecap=%27square%27 stroke-linejoin=%27miter%27 stroke-width=%273%27 fill=%27red%27 stroke=%27red%27%3E%3Cpolyline points=%272 16 11 25 30 6%27 fill=%27none%27 stroke=%27red%27 stroke-miterlimit=%2710%27/%3E%3C/g%3E%3C/svg%3E")
+
+.ph.selection-control[type="checkbox"].is-invalid:checked + label:before
+  background-color #e1e1e1
+  box-shadow inset 0 0 0 1px red
+
+.ph.selection-control[type="checkbox"].is-invalid:checked + label:after
+  background-image url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ctitle%3Echeck%3C/title%3E%3Cg class=%27nc-icon-wrapper%27 stroke-linecap=%27square%27 stroke-linejoin=%27miter%27 stroke-width=%273%27 fill=%27red%27 stroke=%27red%27%3E%3Cpolyline points=%272 16 11 25 30 6%27 fill=%27none%27 stroke=%27red%27 stroke-miterlimit=%2710%27/%3E%3C/g%3E%3C/svg%3E")
+
+.ph.selection-control[type="checkbox"].is-disabled:checked + label:before
+  background-color transparent
+  box-shadow inset 0 0 0 1px rgba(0,0,0,0.3)
+
+.ph.selection-control[type="checkbox"].is-disabled:checked + label:after
+  background-image url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ctitle%3Echeck%3C/title%3E%3Cg class=%27nc-icon-wrapper%27 stroke-linecap=%27square%27 stroke-linejoin=%27miter%27 stroke-width=%273%27 fill=%27%23a1a1a1e%27 stroke=%27%23a1a1a1e%27%3E%3Cpolyline points=%272 16 11 25 30 6%27 fill=%27none%27 stroke=%27%23a1a1a1e%27 stroke-miterlimit=%2710%27/%3E%3C/g%3E%3C/svg%3E")
+
+.ph.selection-control[type="radio"],
+.ph.selection-control[type="checkbox"]
+  flex-grow 0
+  height 0
+  left -1000px
+  opacity 0
+  padding 0
+  position absolute
+  width 0
+
+.ph.selection-control[type="radio"] + label,
+.ph.selection-control[type="checkbox"] + label
+  display flex
+  align-items center
+  cursor pointer
+  font-size 14px
+  font-family "Roboto", "Helvetica Neue", Helvetica, sans-serif
+  font-weight 400
+
+.ph.selection-control[type="radio"] + label:before,
+.ph.selection-control[type="checkbox"] + label:before
+  transition all 0.1s cubic-bezier(0.4, 0, 0.2, 1)
+  content ""
+  display block
+  margin-right 0.5rem
+  height 24px
+  width 24px
+  flex-shrink 0
+  flex-grow 0
+  background-color #FFF
+  box-shadow inset 0 0 0 2pt #CCC
+  border-radius 0
+
+.ph.toggle[type="checkbox"]
+  flex-grow 0
+  height 0
+  left -1000px
+  opacity 0
+  padding 0
+  position absolute
+  width 0
+
+
+.ph.toggle[type="checkbox"] + label
+  display flex
+  align-items center
+  cursor pointer
+  font-size 14px
+  font-family "Roboto", sans-serif
+  font-weight 400
+  margin-bottom 1rem
+
+.ph.toggle[type="checkbox"]:disabled + label,
+.ph.toggle[type="checkbox"].is-disabled + label
+  color rgba(0,0,0,0.4)
+
+.ph.toggle[type="checkbox"]:disabled + label:after,
+.ph.toggle[type="checkbox"].is-disabled + label:after
+  color rgba(0,0,0,0.4)
+  border-color rgba(0,0,0,0.3)
+  background-color transparent
+
+.ph.toggle[type="checkbox"]:disabled + label:before,
+.ph.toggle[type="checkbox"].is-disabled + label:before
+  background-color transparent
+  box-shadow 0 0 0 1px rgba(0,0,0,0.3) inset
+
+.ph.toggle[type="checkbox"] + label
+  padding-right 4rem
+
+.ph.toggle[type="checkbox"] + label:after
+  content ""
+  z-index 1
+  display block
+  overflow hidden
+  margin-bottom 0
+  cursor pointer
+  height 24px
+  width 44px
+  position absolute
+  top 50%
+  transform translateY(-50%)
+  bottom 0
+  right 0
+  padding 0
+  line-height 24px
+  border 2pt solid #ccc
+  border-radius 24px
+  background-color #ccc
+  transition all 0.1s cubic-bezier(0.4, 0, 0.2, 1)
+
+.ph.toggle[type="checkbox"] + label:before
+  content ""
+  z-index 2
+  display block
+  width 20px
+  height 20px
+  flex-shrink 0
+  flex-grow 0
+  margin 0
+  background-color #fff
+  position absolute
+  top 50%
+  transform translateY(-50%)
+  bottom 0
+  right 21px
+  box-shadow 0 0 0 2pt #fff inset
+  border-radius 100%
+  transition all 0.1s cubic-bezier(0.4, 0, 0.2, 1)
+
+.ph.toggle[type="checkbox"]:checked + label:after
+  background-color blue
+  border 2pt solid blue
+
+.ph.toggle[type="checkbox"]:checked + label:before
+  right 4px
+
+.ph.toggle[type="checkbox"]:checked:disabled + label:after
+  border-color rgba(0,0,0,0.3)
+  background-color rgba(0,0,0,0.3)
+
+.ph.toggle[type="checkbox"]:checked:disabled + label:before
+  background-color rgba(225,225,225,0.3)
+  box-shadow 0 0 0 1px rgba(0,0,0,0.3) inset
+
+.ph.toggle[type="checkbox"].is-disabled:checked + label:after
+  border-color rgba(0,0,0,0.3)
+  background-color rgba(0,0,0,0.3)
+
+.ph.toggle[type="checkbox"].is-disabled:checked + label:before
+  background-color rgba(225,225,225,0.3)
+  box-shadow 0 0 0 1px rgba(0,0,0,0.3) inset
+
+.ph.selection-control[type="radio"]:focus + label,
+.ph.selection-control[type="checkbox"]:focus + label,
+.ph.selection-control[type="radio"].is-focused + label,
+.ph.selection-control[type="checkbox"].is-focused + label
+  outline 2pt solid #ff9900
+  outline-offset 1pt
+
+.ph.toggle[type="checkbox"]:focus + label,
+.ph.toggle[type="checkbox"].is-focused + label
+  outline 2pt solid #ff9900
+  outline-offset 1pt
+
+
+select.ph
+  background-color transparent
+  border none
+  height 28px
+  padding 0 1.25rem 0 0
+  color #000
+  box-shadow none
+  -moz-appearance none
+  -webkit-appearance none
+  appearance none
+  background-image url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ctitle%3Esmall down%3C/title%3E%3Cg class=%27nc-icon-wrapper%27 stroke-linecap=%27square%27 stroke-linejoin=%27miter%27 stroke-width=%272%27 fill=%27%23331e11%27 stroke=%27%23331e11%27%3E%3Cpolyline fill=%27none%27 stroke=%27%23331e11%27 stroke-miterlimit=%2710%27 points=%2722,13 16,19 10,13 %27/%3E%3C/g%3E%3C/svg%3E")
+  background-repeat no-repeat
+  background-size 20px 20px
+  background-position right 0.75rem center
+  width 100%
+
+
+select.ph.is-disabled,
+select.ph:disabled
+  background-image url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ctitle%3Esmall down%3C/title%3E%3Cg class=%27nc-icon-wrapper%27 stroke-linecap=%27square%27 stroke-linejoin=%27miter%27 stroke-width=%272%27 fill=%27rgba(110,98,94,0.3)%27 stroke=%27rgba(110,98,94,0.3)%27%3E%3Cpolyline fill=%27none%27 stroke=%27rgba(110,98,94,0.3)%27 stroke-miterlimit=%2710%27 points=%2722,13 16,19 10,13 %27/%3E%3C/g%3E%3C/svg%3E")
+  background-repeat no-repeat
+  background-position center center
+  background-size 20px 20px
+  background-position right 0.75rem center
+
+select.ph.is-invalid,
+select.ph[invalid]
+  border-color red
+  box-shadow none
+  border-width 2pt
+  background-color #e1e1e1
+
+select::-ms-expand
+  display none
