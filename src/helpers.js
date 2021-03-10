@@ -5,6 +5,27 @@ export const rgb2hex = rgb => {
   };
   return '#' + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
 };
+export const processHTML = str =>
+  new Promise(resolve => {
+    if (!window.prettier) {
+      const beautifyScript = document.createElement('script');
+
+      beautifyScript.onload = function () {
+        const beautifyHTMLScript = document.createElement('script');
+        beautifyHTMLScript.onload = function () {
+          resolve(window.prettier.format(str, { parser: 'html', plugins: window.prettierPlugins }));
+        };
+        beautifyHTMLScript.src = 'https://unpkg.com/prettier@2.2.1/parser-html.js';
+        document.head.appendChild(beautifyHTMLScript);
+      };
+
+      beautifyScript.src = 'https://unpkg.com/prettier@2.2.1/standalone.js';
+
+      document.head.appendChild(beautifyScript);
+    } else {
+      resolve(window.prettier.format(str, { parser: 'html', plugins: window.prettierPlugins }));
+    }
+  });
 
 export const debounce = function (func, wait, immediate) {
   var timeout;

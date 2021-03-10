@@ -1,5 +1,95 @@
 /* eslint no-console:0 */
-import { rgb2hex, debounce, humanizeString } from './helpers';
+import { rgb2hex, debounce, humanizeString, processHTML } from './helpers';
+//
+// console.clear();
+// const TEST_CONFIG = {
+//   position: 'center',
+//   name: 'Input',
+//   html: 'true',
+//   css: 'https://if-vid-brand-cdn.azureedge.net/ifdesignsystem.min.css',
+//   js: 'https://unpkg.com/what-input@5.2.10/dist/what-input.js',
+//   markup:
+//     '<input placeholder="Enter your last name" name="input-field-with-icons-02" id="input-field-with-icons-02" type="text" class="if input-field"><label class="if" for="input-field-with-icons-02">Last name</label>',
+//   wrapper: {
+//     el: 'div',
+//     classNames: 'if input-wrapper'
+//   },
+//   backgrounds: [
+//     {
+//       name: 'BE 5',
+//       color: '#faf9f7'
+//     },
+//     {
+//       name: 'BE 4',
+//       color: '#f6f3f0'
+//     },
+//     {
+//       name: 'BE 3',
+//       default: true,
+//       color: '#f1ece8'
+//     },
+//     {
+//       name: 'BE 2',
+//       color: '#ede6e1'
+//     },
+//     {
+//       name: 'BE 1',
+//       color: '#e8e0d9'
+//     }
+//   ],
+//   variants: [
+//     {
+//       name: 'Input field',
+//       classNames: 'if input-field'
+//     }
+//   ],
+//   states: [
+//     {
+//       name: 'Disabled',
+//       attributes: {
+//         disabled: 'disabled'
+//       }
+//     },
+//     {
+//       name: 'Closed',
+//       classNames: 'is-closed'
+//     },
+//     {
+//       name: 'Invalid',
+//       attributes: {
+//         invalid: 'invalid'
+//       }
+//     }
+//   ],
+//   modifiers: [
+//     {
+//       name: 'Default',
+//       group: 'mandatory',
+//       classNames: ''
+//     },
+//     {
+//       name: 'Required',
+//       group: 'mandatory',
+//       attributes: {
+//         required: 'required'
+//       }
+//     },
+//     {
+//       name: 'Optional',
+//       group: 'mandatory',
+//       classNames: 'is-optional'
+//     }
+//   ],
+//   interactions: [
+//     {
+//       name: 'Focused',
+//       classNames: 'is-focused',
+//       previewAttributes: {
+//         'data-whatinput': 'keyboard'
+//       }
+//     }
+//   ]
+// };
 
 const settingsMenuInit = () => {
   const settingsMenuTriggers = document.querySelectorAll('.ph.js-settings-menu');
@@ -63,7 +153,7 @@ const settingsMenuInit = () => {
       window.removeEventListener('resize', adjustMenuPlacement);
       window.addEventListener('resize', adjustMenuPlacement);
     };
-    const handleOverflowMenuClick = e => {
+    const handleMenuClick = e => {
       const settingsMenuTrigger = e.target;
       const settingsMenuHolder = settingsMenuTrigger.parentElement;
       const settingsMenu = settingsMenuHolder.querySelector('.ph.menu');
@@ -84,7 +174,7 @@ const settingsMenuInit = () => {
     let indexOfOptions = 0;
     let allOptions = null;
 
-    const handleOverflowMenuKeypress = e => {
+    const handleMenuKeypress = e => {
       const settingsMenuTrigger = e.target;
       const settingsMenuHolder = settingsMenuTrigger.parentElement;
       const settingsMenuList = settingsMenuHolder.querySelector('.ph.menu > ul.ph');
@@ -133,10 +223,10 @@ const settingsMenuInit = () => {
       }
     };
 
-    settingsMenuTrigger.removeEventListener('click', handleOverflowMenuClick);
-    settingsMenuTrigger.removeEventListener('keyup', handleOverflowMenuKeypress);
-    settingsMenuTrigger.addEventListener('click', handleOverflowMenuClick);
-    settingsMenuTrigger.addEventListener('keyup', handleOverflowMenuKeypress);
+    settingsMenuTrigger.removeEventListener('click', handleMenuClick);
+    settingsMenuTrigger.removeEventListener('keyup', handleMenuKeypress);
+    settingsMenuTrigger.addEventListener('click', handleMenuClick);
+    settingsMenuTrigger.addEventListener('keyup', handleMenuKeypress);
   });
 };
 
@@ -284,7 +374,12 @@ const setDefaultBackground = (component, opts) => {
   if (!preview) return;
   const { backgrounds } = opts;
   if (isArrayUsable(backgrounds)) {
-    preview.style.backgroundColor = backgrounds[0].color;
+    const defaultBg = backgrounds.find(b => b.default);
+    if (defaultBg) {
+      preview.style.backgroundColor = defaultBg.color;
+    } else {
+      preview.style.backgroundColor = backgrounds[0].color;
+    }
   }
 };
 
@@ -396,6 +491,21 @@ const removeVariantAttributes = (variant, opts, component) => {
   const removeTheseAttributes = opts.variants.reduce((result, variant) => {
     if (variant.attributes && Array.isArray(variant.attributes) && variant.attributes.length !== 0) {
       const a = variant.attributes.map(v => {
+        //////console.log(v.key);
+        return v.key;
+      });
+
+      a.forEach(b => result.push(b));
+    }
+    return result;
+  }, []);
+  ////console.log(removeTheseAttributes);
+  removeTheseAttributes.forEach(key => component.removeAttribute(key));
+};
+const removeVariantStyles = (variant, opts, component) => {
+  const removeTheseStyles = opts.variants.reduce((result, variant) => {
+    if (variant.styles && Array.isArray(variant.styles) && variant.styles.length !== 0) {
+      const a = variant.styles.map(v => {
         ////console.log(v.key);
         return v.key;
       });
@@ -404,22 +514,7 @@ const removeVariantAttributes = (variant, opts, component) => {
     }
     return result;
   }, []);
-  //console.log(removeTheseAttributes);
-  removeTheseAttributes.forEach(key => component.removeAttribute(key));
-};
-const removeVariantStyles = (variant, opts, component) => {
-  const removeTheseStyles = opts.variants.reduce((result, variant) => {
-    if (variant.styles && Array.isArray(variant.styles) && variant.styles.length !== 0) {
-      const a = variant.styles.map(v => {
-        //console.log(v.key);
-        return v.key;
-      });
-
-      a.forEach(b => result.push(b));
-    }
-    return result;
-  }, []);
-  //console.log(removeTheseStyles);
+  ////console.log(removeTheseStyles);
   removeTheseStyles.forEach(key => (component.style[key] = ''));
 };
 const addVariantStyles = (variant, component) => {
@@ -493,17 +588,15 @@ const addVariantClassNames = (variant, component, opts) => {
     if (opts.modifiers) {
       if (opts.variants) {
         opts.variants.forEach(variant => {
-          //console.log(variant);
+          ////console.log(variant);
           if (variant.modifiers) {
-            //console.log('got variant modifiers in variant', variant.modifiers);
+            ////console.log('got variant modifiers in variant', variant.modifiers);
             variant.modifiers.forEach(mod => {
               const modEl = document.querySelector(
                 `input[data-modifier="${mod.name}"][data-modifier-group="${mod.group}"]`
               );
               if (modEl) {
-                console.log(
-                  `Removing modifier ${mod.name}, el: input[data-modifier="${mod.name}"][data-modifier-group="${mod.group}"]`
-                );
+                //console.log(`Removing modifier ${mod.name}, el: input[data-modifier="${mod.name}"][data-modifier-group="${mod.group}"]`            );
                 const modElId = modEl.getAttribute('id');
                 const labelForModEl = document.querySelector(`label[for="${modElId}"]`);
 
@@ -517,31 +610,7 @@ const addVariantClassNames = (variant, component, opts) => {
     }
   }
 };
-//
-// const initVariantOnChange2 = ({ component, opts, variant }) => e => {
-//   const chosenModifier = e.target.value;
-//   console.log('[modifierOnSelectChangeFactory]:', { modifier: false, variant, opts, chosenModifier });
-//   const modifier = getCurrentModifier({ modifier: false, variant, opts, chosenModifier });
-//   const group = getCurrentGroup({ modifier: chosenModifier, modifiers: variant ? variant.modifiers : opts.modifiers });
-//   const groups = variant ? getGroups(variant.modifiers) : getGroups(opts.modifiers);
-//   // If the modifier change is from a variant,
-//   // only remove the modifier for the relevant variant group
-//   if (variant) {
-//     console.log('********************************');
-//     console.log('********************************');
-//     console.log({ group, groups, modifier });
-//     console.log('********************************');
-//     console.log('********************************');
-//     console.log('********************************');
-//     if (modifier.classNames) {
-//       toggleModifierClassNames({ modifier, groups, group, component, variantName: variant.name });
-//     }
-//   } else {
-//     toggleModifierClassNames({ modifier, groups, group, component });
-//     toggleModifierAttributes({ modifier, component });
-//     toggleModifierPreviewAttributes({ modifier, component });
-//   }
-// };
+
 const initVariantOnChange = (select, component, opts) => {
   select.addEventListener('change', e => {
     const chosenVariant = e.target.value;
@@ -562,7 +631,7 @@ const getCurrentModifier = ({ modifier, variant, opts, chosenModifier }) => {
     return modifier;
   }
   if (variant) {
-    console.log('[getCurrentModifier]:', variant.modifiers, chosenModifier);
+    //console.log('[getCurrentModifier]:', variant.modifiers, chosenModifier);
     return getModifier(variant.modifiers, chosenModifier);
   }
   return getModifier(opts.modifiers, chosenModifier);
@@ -615,13 +684,16 @@ const addModifierAttributes = ({ modifier, component }) => {
     });
   }
 };
-const toggleModifierAttributes = ({ modifier, component }) => {
+const toggleModifierAttributes = ({ modifier, component, group, groups }) => {
   if (modifier.attributes) {
     Object.keys(modifier.attributes).forEach(a => {
+      //console.log('a', a, component.getAttribute(a), modifier.attributes[a]);
       if (component.getAttribute(a) === modifier.attributes[a]) {
+        //console.log(`removing attribute ${a} from ${component}`);
         component.removeAttribute(a);
       } else {
         component.setAttribute(a, modifier.attributes[a]);
+        //console.log(`adding attribute ${a} from ${component}`);
       }
     });
   }
@@ -667,16 +739,11 @@ const toggleModifierPreviewAttributes = ({ modifier, component }) => {
 };
 
 const modifierOnChangeFactory = ({ input, component, opts, modifier, variant }) => e => {
-  console.log({ input, component, opts, modifier, variant });
+  //console.log({ input, component, opts, modifier, variant });
   let chosenModifier;
   const group = e.target.getAttribute('data-modifier-group');
 
-  // Most likely from a select box
-  if (input && input.nodeName === 'SELECT') {
-    chosenModifier = e.target.value;
-  } else {
-    chosenModifier = e.target.getAttribute('data-modifier');
-  }
+  chosenModifier = e.target.getAttribute('data-modifier');
   modifier = getCurrentModifier({ modifier, variant, opts, chosenModifier });
 
   let groups;
@@ -684,25 +751,73 @@ const modifierOnChangeFactory = ({ input, component, opts, modifier, variant }) 
   // only remove the modifier for the relevant variant group
   if (variant) {
     groups = getGroups(variant.modifiers);
-    console.log('********************************');
-    console.log('¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤');
-    console.log({ groups, modifier });
-    console.log('¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤');
-    console.log('********************************');
-    console.log('¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤');
     if (modifier.classNames) {
       toggleModifierClassNames({ modifier, groups, group, component, variantName: variant.name });
     }
   } else {
     groups = getGroups(opts.modifiers);
-    toggleModifierClassNames({ modifier, groups, group, component });
-    toggleModifierAttributes({ modifier, component });
-    toggleModifierPreviewAttributes({ modifier, component });
+    //console.log('modifierOnChangeFactory----------------------------');
+    //console.log('---------------------------------------------------');
+    //console.log(group);
+    //console.log('---------------------------------------------------');
+    // Remove all modifier classNames
+    Object.keys(groups).forEach(g =>
+      groups[g].forEach(g => {
+        if (g.classNames) {
+          g.classNames.split(' ').forEach(cl => {
+            if (cl !== 'noop' && component.classList.contains(cl)) {
+              console.info(
+                `Removing class \`${cl}\` from modifier \`${g.name}\` from current component \`${component}\``
+              );
+              component.classList.remove(cl);
+            }
+          });
+        } else if (g.attributes) {
+          Object.keys(g.attributes).forEach(a => {
+            //console.log('a', a, component.getAttribute(a), g.attributes[a]);
+            if (component.getAttribute(a) === g.attributes[a]) {
+              //console.log(`Removing attribute ${a} from \`${component}\``);
+              component.removeAttribute(a);
+            }
+          });
+        } else if (g.previewAttributes) {
+          const preview = component.closest('.ph.preview');
+          Object.keys(g.previewAttributes).forEach(pA => {
+            if (preview.getAttribute(pA) === g.previewAttributes[pA]) {
+              //console.log(`Removing attribute ${pA} from \`${component}\``);
+              preview.removeAttribute(pA);
+            }
+          });
+        } else {
+          console.info(`No modifiers to remove for modifier group \`${g}\``);
+        }
+      })
+    );
+    // Add current modifiers
+    if (modifier.classNames) {
+      setClassNames(component, modifier.classNames);
+    } else if (modifier.attributes) {
+      Object.keys(modifier.attributes).forEach(a => {
+        //console.log('a', a, component.getAttribute(a), modifier.attributes[a]);
+
+        component.setAttribute(a, modifier.attributes[a]);
+        //console.log(`adding attribute ${a} from ${component}`);
+      });
+    } else if (modifier.previewAttributes) {
+      const preview = component.closest('.ph.preview');
+      Object.keys(modifier.previewAttributes).forEach(pA => {
+        preview.setAttribute(pA, modifier.previewAttributes[pA]);
+      });
+    }
+
+    // toggleModifierClassNames({ modifier, groups, group, component });
+    // toggleModifierAttributes({ modifier, component, groups, group });
+    // toggleModifierPreviewAttributes({ modifier, component });
   }
 };
 
 const modifierOnChangeToggleFactory = ({ input, component, opts, modifier, variant }) => e => {
-  console.log({ input, component, opts, modifier, variant });
+  //console.log({ input, component, opts, modifier, variant });
   let chosenModifier;
   const group = e.target.getAttribute('data-modifier-group');
 
@@ -726,13 +841,20 @@ const modifierOnChangeToggleFactory = ({ input, component, opts, modifier, varia
     groups = getGroups(opts.modifiers);
     if (modifier.classNames) {
       if (!input.checked) {
-        removeModifierClassNamesInGroup({ modifier, groups, group, component, variantName: variant.name });
+        removeModifierClassNamesInGroup({ modifier, groups, group, component });
         removeModifierAttributes({ modifier, component });
         removeModifierPreviewAttributes({ modifier, component });
       } else {
         setClassNames(component, modifier.classNames);
         addModifierAttributes({ modifier, component });
         addModifierPreviewAttributes({ modifier, component });
+      }
+    }
+    if (modifier.attributes) {
+      if (!input.checked) {
+        removeModifierAttributes({ modifier, component });
+      } else {
+        addModifierAttributes({ modifier, component });
       }
     }
   }
@@ -755,19 +877,19 @@ const modifierOnChangeToggleFactory = ({ input, component, opts, modifier, varia
 const getCurrentGroup = ({ modifier, modifiers }) => modifiers.filter(m => m.name === modifier).map(m => m.group)[0];
 const modifierOnSelectChangeFactory = ({ component, opts, variant }) => e => {
   const chosenModifier = e.target.value;
-  console.log('[modifierOnSelectChangeFactory]:', { modifier: false, variant, opts, chosenModifier });
+  //console.log('[modifierOnSelectChangeFactory]:', { modifier: false, variant, opts, chosenModifier });
   const modifier = getCurrentModifier({ modifier: false, variant, opts, chosenModifier });
   const group = getCurrentGroup({ modifier: chosenModifier, modifiers: variant ? variant.modifiers : opts.modifiers });
   const groups = variant ? getGroups(variant.modifiers) : getGroups(opts.modifiers);
   // If the modifier change is from a variant,
   // only remove the modifier for the relevant variant group
   if (variant) {
-    console.log('********************************');
-    console.log('********************************');
-    console.log({ group, groups, modifier });
-    console.log('********************************');
-    console.log('********************************');
-    console.log('********************************');
+    //console.log('********************************');
+    //console.log('********************************');
+    //console.log({ group, groups, modifier });
+    //console.log('********************************');
+    //console.log('********************************');
+    //console.log('********************************');
     if (modifier.classNames) {
       toggleModifierClassNames({ modifier, groups, group, component, variantName: variant.name });
     }
@@ -872,7 +994,9 @@ const createModifierToggleFactory = ({ component, opts, selectionControls, varia
 
   input.setAttribute('id', _id);
   input.setAttribute('data-modifier', name);
-  input.setAttribute('data-variant', variant.name);
+  if (variant) {
+    input.setAttribute('data-variant', variant.name);
+  }
   input.setAttribute('data-modifier-group', group);
   input.classList.add('ph');
 
@@ -935,7 +1059,7 @@ const createModifiers = ({ form, modifiers, component, opts, variant }) => {
   const fragment = document.createDocumentFragment();
 
   const groupNames = getGroupNames(modifiers);
-  console.log({ groupNames });
+  //console.log({ groupNames });
   if (modifiers.length > 7) {
     createModifiersSelectBox({ fragment, component, opts, variant });
   } else if (modifiers.length > 1 && groupNames.length <= 1) {
@@ -947,7 +1071,7 @@ const createModifiers = ({ form, modifiers, component, opts, variant }) => {
     legend.classList.add('ph');
     const inputWrapper = document.createElement('div');
     if (groupNames && groupNames.length) {
-      console.log({ groupNames });
+      //console.log({ groupNames });
       legend.textContent = humanizeString(groupNames[0]);
       inputWrapper.classList.add(groupNames[0]);
     } else {
@@ -1119,52 +1243,61 @@ const setConfigurationDrawer = (component, el, opts) => {
   }
 };
 
+const createSingleVariant = (form, variant) => {
+  const { name } = variant;
+  const componentTitleElement = document.createElement('span');
+  componentTitleElement.classList.add('ph');
+  componentTitleElement.classList.add('component-title');
+  componentTitleElement.textContent = name;
+  form.appendChild(componentTitleElement);
+};
+
 const createVariants = (form, variants, component, opts) => {
-  const inputWrapper = document.createElement('div');
-  inputWrapper.classList.add('ph');
-  inputWrapper.classList.add('input-wrapper');
+  if (variants.length === 1) {
+    createSingleVariant(form, variants[0]);
+  } else {
+    const _id = ID();
+    const select = document.createElement('select');
 
-  const _id = ID();
-  const select = document.createElement('select');
+    select.setAttribute('id', _id);
+    select.classList.add('ph');
+    select.setAttribute('data-size', 'medium');
+    select.setAttribute('name', _id);
+    variants.forEach((variant, index) => {
+      const { name } = variant;
+      const option = document.createElement('option');
+      option.setAttribute('data-variant', name);
+      option.setAttribute('value', name);
+      option.textContent = name;
+      if (index === 0) {
+        option.setAttribute('selected', '');
+        if (variant.modifiers) {
+          const modifierForm = form.closest('.demo').querySelector('form.modifiers');
 
-  select.setAttribute('id', _id);
-  select.classList.add('ph');
-  select.setAttribute('data-size', 'medium');
-  select.setAttribute('name', _id);
-  variants.forEach((variant, index) => {
-    const { name } = variant;
-    const option = document.createElement('option');
-    option.setAttribute('data-variant', name);
-    option.setAttribute('value', name);
-    option.textContent = name;
-    if (index === 0) {
-      option.setAttribute('selected', '');
-      if (variant.modifiers) {
-        const modifierForm = form.closest('.demo').querySelector('form.modifiers');
-
-        const cmOpts = {
-          form: modifierForm,
-          modifiers: variant.modifiers,
-          component,
-          opts,
-          variant
-        };
-        console.info('[createVariants]: Creating variant modifiers');
-        createModifiers(cmOpts);
+          const cmOpts = {
+            form: modifierForm,
+            modifiers: variant.modifiers,
+            component,
+            opts,
+            variant
+          };
+          console.info('[createVariants]: Creating variant modifiers');
+          createModifiers(cmOpts);
+        }
       }
-    }
 
-    select.appendChild(option);
+      select.appendChild(option);
 
-    initVariantOnChange(select, component, opts);
-  });
-
-  form.appendChild(select);
+      initVariantOnChange(select, component, opts);
+      form.appendChild(select);
+    });
+  }
 };
 
 const createBackgrounds = (el, backgrounds) => {
   if (backgrounds && Array.isArray(backgrounds) && backgrounds.length !== 0) {
-    console.log('got backgrounds');
+    //console.log('got backgrounds');
+
     const fragment = document.createDocumentFragment();
     const container = document.createElement('div');
     container.classList.add('ph');
@@ -1221,13 +1354,16 @@ const createBackgrounds = (el, backgrounds) => {
         const preview = el.closest('.demo').querySelector('.ph.preview');
         const actionButton = e.target;
         const color = actionButton.getAttribute('data-color');
-        console.log(preview.style.backgroundColor, color);
+        actionButton.classList.toggle('is-active');
+        //console.log(preview.style.backgroundColor, color);
         const currentBackgroundColor =
           preview.style.backgroundColor !== '' ? rgb2hex(preview.style.backgroundColor) : '';
         if (currentBackgroundColor === color) {
           preview.style.backgroundColor = '';
+          actionButton.setAttribute('aria-selected', false);
         } else {
           preview.style.backgroundColor = color;
+          actionButton.setAttribute('aria-selected', true);
         }
       });
     });
@@ -1272,7 +1408,7 @@ const initPrism = () => {
     window.Prism.highlightAll();
   }
 };
-const initHtml = () => {
+const initHtml = async () => {
   const html = document.querySelector('.ph.html');
   const preview = document.querySelector('.ph.preview');
 
@@ -1280,7 +1416,7 @@ const initHtml = () => {
 
   const _html = clear(html);
 
-  const code = preview.innerHTML;
+  const code = await processHTML(preview.innerHTML);
 
   if (!code || (code && code.length === '')) return;
 
@@ -1440,14 +1576,27 @@ const init = cfg => {
 
   const preview = el.querySelector('.ph.preview');
 
-  const { markup } = options;
+  const { markup, wrapper } = options;
   if (markup && markup !== '') {
     const fragment = document.createRange().createContextualFragment(markup);
     const component = fragment.firstChild;
-    preview.appendChild(fragment);
+    if (wrapper) {
+      const { el, classNames } = wrapper;
+      if (el && el !== '') {
+        const wrapperElement = document.createElement(el);
+        setClassNames(wrapperElement, classNames);
+        wrapperElement.appendChild(fragment);
+        preview.appendChild(wrapperElement);
+      } else {
+        preview.appendChild(fragment);
+      }
+    } else {
+      preview.appendChild(fragment);
+    }
     if (options.preset) {
       setPresetDefaults(component, options);
     } else {
+      setDefaultBackground(component, options);
       setDefaultClassNames(component, options);
       setDefaultLabel(component, options);
       if (options.ui) {
@@ -1466,3 +1615,9 @@ const init = cfg => {
 export default init;
 
 init();
+
+/*
+@todo Need support for wide components
+@todo Need support for custom js
+@todo Need support for custom events for modifiers
+*/
