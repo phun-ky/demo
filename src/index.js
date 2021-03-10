@@ -1594,6 +1594,7 @@ const init = cfg => {
     } else {
       preview.appendChild(fragment);
     }
+    console.log({ fragment, component });
     if (options.preset) {
       setPresetDefaults(component, options);
     } else {
