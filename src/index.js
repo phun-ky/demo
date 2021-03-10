@@ -1250,6 +1250,28 @@ const setHeader = (component, el, opts) => {
 const updateHTML = () => {
   initHtml();
 };
+const initPrism = () => {
+  if (!window.Prism) {
+    const link = document.createElement('link');
+
+    // set properties of link tag
+    link.href = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.22.0/themes/prism-solarizedlight.min.css';
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+
+    // append link element to html
+    document.body.appendChild(link);
+    const script = document.createElement('script');
+    script.onload = function () {
+      window.Prism.highlightAll();
+    };
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.22.0/prism.min.js';
+
+    document.head.appendChild(script);
+  } else {
+    window.Prism.highlightAll();
+  }
+};
 const initHtml = () => {
   const html = document.querySelector('.ph.html');
   const preview = document.querySelector('.ph.preview');
@@ -1273,26 +1295,7 @@ const initHtml = () => {
 
   preTag.appendChild(codeTag);
   _html.appendChild(preTag);
-  if (!window.Prism) {
-    const link = document.createElement('link');
-
-    // set properties of link tag
-    link.href = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.22.0/themes/prism-solarizedlight.min.css';
-    link.rel = 'stylesheet';
-    link.type = 'text/css';
-
-    // append link element to html
-    document.body.appendChild(link);
-    const script = document.createElement('script');
-    script.onload = function () {
-      window.Prism.highlightAll();
-    };
-    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.22.0/prism.min.js';
-
-    document.head.appendChild(script);
-  } else {
-    window.Prism.highlightAll();
-  }
+  initPrism();
 };
 
 const setDefaultUI = opts => {
