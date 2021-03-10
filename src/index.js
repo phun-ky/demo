@@ -370,7 +370,6 @@ const setDefaultLabel = (component, opts) => {
 
 const setDefaultBackground = (component, opts) => {
   if (!component) return;
-  console.log({ component });
   const preview = component.closest('.ph.preview');
   if (!preview) return;
   const { backgrounds } = opts;
@@ -492,7 +491,6 @@ const removeVariantAttributes = (variant, opts, component) => {
   const removeTheseAttributes = opts.variants.reduce((result, variant) => {
     if (variant.attributes && Array.isArray(variant.attributes) && variant.attributes.length !== 0) {
       const a = variant.attributes.map(v => {
-        //////console.log(v.key);
         return v.key;
       });
 
@@ -500,14 +498,12 @@ const removeVariantAttributes = (variant, opts, component) => {
     }
     return result;
   }, []);
-  ////console.log(removeTheseAttributes);
   removeTheseAttributes.forEach(key => component.removeAttribute(key));
 };
 const removeVariantStyles = (variant, opts, component) => {
   const removeTheseStyles = opts.variants.reduce((result, variant) => {
     if (variant.styles && Array.isArray(variant.styles) && variant.styles.length !== 0) {
       const a = variant.styles.map(v => {
-        ////console.log(v.key);
         return v.key;
       });
 
@@ -515,7 +511,6 @@ const removeVariantStyles = (variant, opts, component) => {
     }
     return result;
   }, []);
-  ////console.log(removeTheseStyles);
   removeTheseStyles.forEach(key => (component.style[key] = ''));
 };
 const addVariantStyles = (variant, component) => {
@@ -589,15 +584,12 @@ const addVariantClassNames = (variant, component, opts) => {
     if (opts.modifiers) {
       if (opts.variants) {
         opts.variants.forEach(variant => {
-          ////console.log(variant);
           if (variant.modifiers) {
-            ////console.log('got variant modifiers in variant', variant.modifiers);
             variant.modifiers.forEach(mod => {
               const modEl = document.querySelector(
                 `input[data-modifier="${mod.name}"][data-modifier-group="${mod.group}"]`
               );
               if (modEl) {
-                //console.log(`Removing modifier ${mod.name}, el: input[data-modifier="${mod.name}"][data-modifier-group="${mod.group}"]`            );
                 const modElId = modEl.getAttribute('id');
                 const labelForModEl = document.querySelector(`label[for="${modElId}"]`);
 
@@ -632,7 +624,6 @@ const getCurrentModifier = ({ modifier, variant, opts, chosenModifier }) => {
     return modifier;
   }
   if (variant) {
-    //console.log('[getCurrentModifier]:', variant.modifiers, chosenModifier);
     return getModifier(variant.modifiers, chosenModifier);
   }
   return getModifier(opts.modifiers, chosenModifier);
@@ -688,13 +679,10 @@ const addModifierAttributes = ({ modifier, component }) => {
 const toggleModifierAttributes = ({ modifier, component, group, groups }) => {
   if (modifier.attributes) {
     Object.keys(modifier.attributes).forEach(a => {
-      //console.log('a', a, component.getAttribute(a), modifier.attributes[a]);
       if (component.getAttribute(a) === modifier.attributes[a]) {
-        //console.log(`removing attribute ${a} from ${component}`);
         component.removeAttribute(a);
       } else {
         component.setAttribute(a, modifier.attributes[a]);
-        //console.log(`adding attribute ${a} from ${component}`);
       }
     });
   }
@@ -740,7 +728,6 @@ const toggleModifierPreviewAttributes = ({ modifier, component }) => {
 };
 
 const modifierOnChangeFactory = ({ input, component, opts, modifier, variant }) => e => {
-  //console.log({ input, component, opts, modifier, variant });
   let chosenModifier;
   const group = e.target.getAttribute('data-modifier-group');
 
@@ -757,10 +744,6 @@ const modifierOnChangeFactory = ({ input, component, opts, modifier, variant }) 
     }
   } else {
     groups = getGroups(opts.modifiers);
-    //console.log('modifierOnChangeFactory----------------------------');
-    //console.log('---------------------------------------------------');
-    //console.log(group);
-    //console.log('---------------------------------------------------');
     // Remove all modifier classNames
     Object.keys(groups).forEach(g =>
       groups[g].forEach(g => {
@@ -775,9 +758,7 @@ const modifierOnChangeFactory = ({ input, component, opts, modifier, variant }) 
           });
         } else if (g.attributes) {
           Object.keys(g.attributes).forEach(a => {
-            //console.log('a', a, component.getAttribute(a), g.attributes[a]);
             if (component.getAttribute(a) === g.attributes[a]) {
-              //console.log(`Removing attribute ${a} from \`${component}\``);
               component.removeAttribute(a);
             }
           });
@@ -785,7 +766,6 @@ const modifierOnChangeFactory = ({ input, component, opts, modifier, variant }) 
           const preview = component.closest('.ph.preview');
           Object.keys(g.previewAttributes).forEach(pA => {
             if (preview.getAttribute(pA) === g.previewAttributes[pA]) {
-              //console.log(`Removing attribute ${pA} from \`${component}\``);
               preview.removeAttribute(pA);
             }
           });
@@ -799,10 +779,7 @@ const modifierOnChangeFactory = ({ input, component, opts, modifier, variant }) 
       setClassNames(component, modifier.classNames);
     } else if (modifier.attributes) {
       Object.keys(modifier.attributes).forEach(a => {
-        //console.log('a', a, component.getAttribute(a), modifier.attributes[a]);
-
         component.setAttribute(a, modifier.attributes[a]);
-        //console.log(`adding attribute ${a} from ${component}`);
       });
     } else if (modifier.previewAttributes) {
       const preview = component.closest('.ph.preview');
@@ -818,7 +795,6 @@ const modifierOnChangeFactory = ({ input, component, opts, modifier, variant }) 
 };
 
 const modifierOnChangeToggleFactory = ({ input, component, opts, modifier, variant }) => e => {
-  //console.log({ input, component, opts, modifier, variant });
   let chosenModifier;
   const group = e.target.getAttribute('data-modifier-group');
 
@@ -878,19 +854,12 @@ const modifierOnChangeToggleFactory = ({ input, component, opts, modifier, varia
 const getCurrentGroup = ({ modifier, modifiers }) => modifiers.filter(m => m.name === modifier).map(m => m.group)[0];
 const modifierOnSelectChangeFactory = ({ component, opts, variant }) => e => {
   const chosenModifier = e.target.value;
-  //console.log('[modifierOnSelectChangeFactory]:', { modifier: false, variant, opts, chosenModifier });
   const modifier = getCurrentModifier({ modifier: false, variant, opts, chosenModifier });
   const group = getCurrentGroup({ modifier: chosenModifier, modifiers: variant ? variant.modifiers : opts.modifiers });
   const groups = variant ? getGroups(variant.modifiers) : getGroups(opts.modifiers);
   // If the modifier change is from a variant,
   // only remove the modifier for the relevant variant group
   if (variant) {
-    //console.log('********************************');
-    //console.log('********************************');
-    //console.log({ group, groups, modifier });
-    //console.log('********************************');
-    //console.log('********************************');
-    //console.log('********************************');
     if (modifier.classNames) {
       toggleModifierClassNames({ modifier, groups, group, component, variantName: variant.name });
     }
@@ -1060,7 +1029,6 @@ const createModifiers = ({ form, modifiers, component, opts, variant }) => {
   const fragment = document.createDocumentFragment();
 
   const groupNames = getGroupNames(modifiers);
-  //console.log({ groupNames });
   if (modifiers.length > 7) {
     createModifiersSelectBox({ fragment, component, opts, variant });
   } else if (modifiers.length > 1 && groupNames.length <= 1) {
@@ -1072,7 +1040,6 @@ const createModifiers = ({ form, modifiers, component, opts, variant }) => {
     legend.classList.add('ph');
     const inputWrapper = document.createElement('div');
     if (groupNames && groupNames.length) {
-      //console.log({ groupNames });
       legend.textContent = humanizeString(groupNames[0]);
       inputWrapper.classList.add(groupNames[0]);
     } else {
@@ -1297,8 +1264,6 @@ const createVariants = (form, variants, component, opts) => {
 
 const createBackgrounds = (el, backgrounds) => {
   if (backgrounds && Array.isArray(backgrounds) && backgrounds.length !== 0) {
-    //console.log('got backgrounds');
-
     const fragment = document.createDocumentFragment();
     const container = document.createElement('div');
     container.classList.add('ph');
@@ -1356,7 +1321,6 @@ const createBackgrounds = (el, backgrounds) => {
         const actionButton = e.target;
         const color = actionButton.getAttribute('data-color');
         actionButton.classList.toggle('is-active');
-        //console.log(preview.style.backgroundColor, color);
         const currentBackgroundColor =
           preview.style.backgroundColor !== '' ? rgb2hex(preview.style.backgroundColor) : '';
         if (currentBackgroundColor === color) {
@@ -1579,7 +1543,10 @@ const init = cfg => {
 
   const { markup, wrapper } = options;
   if (markup && markup !== '') {
-    const fragment = document.createRange().createContextualFragment(markup);
+    // Make sure there are no whitespace in the markup,
+    // Since we don't want text nodes
+    const sanitizedMarkup = markup.trim();
+    const fragment = document.createRange().createContextualFragment(sanitizedMarkup);
     const component = fragment.firstChild;
     if (wrapper) {
       const { el, classNames } = wrapper;
@@ -1594,7 +1561,6 @@ const init = cfg => {
     } else {
       preview.appendChild(fragment);
     }
-    console.log({ markup, fragment, component, wrapper });
     if (options.preset) {
       setPresetDefaults(component, options);
     } else {
