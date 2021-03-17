@@ -19,8 +19,8 @@ SettingsMenu.prototype._init = function () {
   this._settings_menu_el = this._settings_menu_holder_el.querySelector('.ph.menu');
   this._settings_menu_list_el = this._settings_menu_holder_el.querySelector('.ph.menu > ul.ph');
 
-  events.toggle(this._trigger_el, 'click', this._handle_menu_click);
-  events.toggle(this._trigger_el, 'keyup', this._handle_menu_keypress);
+  events.toggle(this._trigger_el, 'click', this._handle_menu_click.bind(this));
+  events.toggle(this._trigger_el, 'keyup', this._handle_menu_keypress.bind(this));
 
   this._adjust_placement();
 };
@@ -50,8 +50,8 @@ SettingsMenu.prototype._close_menu = function () {
   classnames.remove(this._settings_menu_list_el, 'is-open');
   attributes.set(this._trigger_el, { 'aria-expanded': false });
   classnames.remove(this._trigger_el, 'is-active');
-  events.remove(window, 'resize', this._adjust_placement);
-  events.remove(document, 'click', this._handle_click_outside_menu);
+  events.remove(window, 'resize', this._adjust_placement.bind(this));
+  events.remove(document, 'click', this._handle_click_outside_menu.bind(this));
 };
 
 SettingsMenu.prototype._adjust_placement = debounce(function () {
@@ -69,8 +69,8 @@ SettingsMenu.prototype._open_menu = function () {
   classnames.set(this._trigger_el, 'is-active');
   attributes.set(this._trigger_el, { 'aria-expanded': true });
 
-  events.toggle(document, 'click', this._handle_click_outside_menu);
-  events.toggle(window, 'resize', this._adjust_placement);
+  events.toggle(document, 'click', this._handle_click_outside_menu.bind(this));
+  events.toggle(window, 'resize', this._adjust_placement.bind(this));
 };
 
 SettingsMenu.prototype._handle_menu_click = function () {
