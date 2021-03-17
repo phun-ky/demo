@@ -1,48 +1,5 @@
-export const rgb2hex = rgb => {
-  rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-  const hex = x => {
-    return ('0' + parseInt(x).toString(16)).slice(-2);
-  };
-  return '#' + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
-};
-export const processHTML = str =>
-  new Promise(resolve => {
-    if (!window.prettier) {
-      const beautifyScript = document.createElement('script');
-
-      beautifyScript.onload = function () {
-        const beautifyHTMLScript = document.createElement('script');
-        beautifyHTMLScript.onload = function () {
-          resolve(window.prettier.format(str, { parser: 'html', plugins: window.prettierPlugins }));
-        };
-        beautifyHTMLScript.src = 'https://unpkg.com/prettier@2.2.1/parser-html.js';
-        document.head.appendChild(beautifyHTMLScript);
-      };
-
-      beautifyScript.src = 'https://unpkg.com/prettier@2.2.1/standalone.js';
-
-      document.head.appendChild(beautifyScript);
-    } else {
-      resolve(window.prettier.format(str, { parser: 'html', plugins: window.prettierPlugins }));
-    }
-  });
-
-export const debounce = function (func, wait, immediate) {
-  var timeout;
-  return function () {
-    var context = this,
-      args = arguments;
-    var later = function () {
-      timeout = null;
-      if (!immediate) func.apply(context, args);
-    };
-    var callNow = immediate && !timeout;
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-    if (callNow) func.apply(context, args);
-  };
-};
-
+/* eslint no-console:0 */
+'use strict';
 // MIT © Sindre Sorhus
 //https://www.npmjs.com/package/humanize-string
 const handlePreserveConsecutiveUppercase = (decamelized, separator) => {
@@ -92,7 +49,7 @@ const decamelize = (text, { separator = '_', preserveConsecutiveUppercase = fals
     .toLowerCase();
 };
 
-export const humanizeString = input => {
+export const humanize = input => {
   if (typeof input !== 'string') {
     throw new TypeError('Expected a string');
   }

@@ -35,7 +35,7 @@ const plugins = [
 
 const build = () =>
   gulp
-    .src('./src/styles.styl')
+    .src('./src/style/styles.styl')
     .pipe(stylus({ 'include css': true, 'disable cache': true }))
     .pipe(rename('styles.css'))
     .pipe(sourcemaps.init())

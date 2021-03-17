@@ -1,6 +1,7 @@
 
 .ph.menu
   background-color #fff
+  background-image linear-gradient(-45deg,#d1d9e6,rgba(209,217,230,.2))
   color #000000
   position absolute
   z-index 100
@@ -8,10 +9,12 @@
   min-width 18rem
   border-radius 0
   display none
-  border 1px solid #c1c1c1
+  border 1px solid rgba(209,217,230,.5)
   transform-origin right center
   max-width 240px
-  box-shadow 0 5px 10px 0 rgba(0,0,0,0.05)
+  box-shadow 4px 4px 6px rgba(0,0,0,0.1)
+  border-radius 4px
+  background-clip padding-box
 
 .ph.menu.is-open
   display flex
@@ -43,7 +46,7 @@
   flex-direction column
   justify-content flex-start
   margin 0
-  background-color #fff
+  background-color transparent
   z-index 100
   border-radius 0
   flex-grow 1
@@ -90,13 +93,13 @@
   padding 0
   margin 0.5rem 1.5rem
   pointer-events none
-  border-top 1px solid #c1c1c1
+  border-top 1px solid rgba(209,217,230,.5)
 
 .ph.menu li > a,
 .ph.menu li > button
   font-family "Roboto", sans-serif
   font-weight 400
-  font-size 14px
+  font-size 1rem
   letter-spacing normal
   color #000000
   text-decoration none
@@ -122,18 +125,19 @@
   overflow hidden
   padding-left 1.5rem
   transition all 0.2s cubic-bezier(0.4, 0, 0.2, 1)
+  background-size 16px 16px
+  background-repeat no-repeat
+  background-position right 1.5rem center
+  &:focus,
+  &[aria-selected="true"],
+  &.is-focused
+    z-index 1
 
 .ph.menu li > a.is-active,
 .ph.menu li > button.is-active
   font-family "Roboto", sans-serif
   font-weight 700
   background-image url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ctitle%3Echeck%3C/title%3E%3Cg class=%27nc-icon-wrapper%27 stroke-linecap=%27square%27 stroke-linejoin=%27miter%27 stroke-width=%272%27 fill=%27%23000000%27 stroke=%27%23000000%27%3E%3Cpolyline points=%272 16 11 25 30 6%27 fill=%27none%27 stroke=%27%23000000%27 stroke-miterlimit=%2710%27/%3E%3C/g%3E%3C/svg%3E")
-  background-repeat no-repeat
-  background-position center center
-  background-size 16px 16px
-  background-repeat no-repeat
-  background-size 1.25rem 1.25rem
-  background-position right 1.5rem center
 
 .ph.menu li > a[disabled],
 .ph.menu li > button[disabled]
@@ -148,9 +152,7 @@
 .ph.menu li > button.is-hovered,
 .ph.menu li > button:hover,
 .ph.menu li > button:active
-  background-color #fff
-  color #000000
-  text-decoration none
+  font-weight bold
 
 .ph.menu li > .ph.menu
   top 0

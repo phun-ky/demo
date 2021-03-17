@@ -1,496 +1,58 @@
 /* eslint no-console:0 */
-import { rgb2hex, debounce, humanizeString, processHTML } from './helpers';
-//
-// console.clear();
-// const TEST_CONFIG = {
-//   position: 'center',
-//   name: 'Input',
-//   html: 'true',
-//   css: 'https://if-vid-brand-cdn.azureedge.net/ifdesignsystem.min.css',
-//   js: 'https://unpkg.com/what-input@5.2.10/dist/what-input.js',
-//   markup:
-//     '<input placeholder="Enter your last name" name="input-field-with-icons-02" id="input-field-with-icons-02" type="text" class="if input-field"><label class="if" for="input-field-with-icons-02">Last name</label>',
-//   wrapper: {
-//     el: 'div',
-//     classNames: 'if input-wrapper'
-//   },
-//   backgrounds: [
-//     {
-//       name: 'BE 5',
-//       color: '#faf9f7'
-//     },
-//     {
-//       name: 'BE 4',
-//       color: '#f6f3f0'
-//     },
-//     {
-//       name: 'BE 3',
-//       default: true,
-//       color: '#f1ece8'
-//     },
-//     {
-//       name: 'BE 2',
-//       color: '#ede6e1'
-//     },
-//     {
-//       name: 'BE 1',
-//       color: '#e8e0d9'
-//     }
-//   ],
-//   variants: [
-//     {
-//       name: 'Input field',
-//       classNames: 'if input-field'
-//     }
-//   ],
-//   states: [
-//     {
-//       name: 'Disabled',
-//       attributes: {
-//         disabled: 'disabled'
-//       }
-//     },
-//     {
-//       name: 'Closed',
-//       classNames: 'is-closed'
-//     },
-//     {
-//       name: 'Invalid',
-//       attributes: {
-//         invalid: 'invalid'
-//       }
-//     }
-//   ],
-//   modifiers: [
-//     {
-//       name: 'Default',
-//       group: 'mandatory',
-//       classNames: ''
-//     },
-//     {
-//       name: 'Required',
-//       group: 'mandatory',
-//       attributes: {
-//         required: 'required'
-//       }
-//     },
-//     {
-//       name: 'Optional',
-//       group: 'mandatory',
-//       classNames: 'is-optional'
-//     }
-//   ],
-//   interactions: [
-//     {
-//       name: 'Focused',
-//       classNames: 'is-focused',
-//       previewAttributes: {
-//         'data-whatinput': 'keyboard'
-//       }
-//     }
-//   ]
-// };
+'use strict';
+import { humanize } from './lib/string';
+import html from './lib/html';
+import form from './lib/form';
+import stylesheet from './lib/stylesheet';
+import debounce from './lib/debounce';
+import script from './lib/script';
+import * as classnames from './lib/classnames';
+import * as styles from './lib/styles';
+import * as markup from './lib/markup';
+import * as node from './lib/node';
+import * as attributes from './lib/attributes';
 
-const settingsMenuInit = () => {
-  const settingsMenuTriggers = document.querySelectorAll('.ph.js-settings-menu');
+import { rgb2hex, isArrayUsable, uniqueID, groupBy } from './lib/helpers';
 
-  const removePreviouslySelectedMenuItem = el => {
-    const selected = el.querySelectorAll('.is-focused');
-    selected.forEach(li => {
-      li.classList.remove('is-focused');
-      li.setAttribute('aria-selected', false);
-    });
-  };
+/* eslint no-console:0 */
+('use strict');
 
-  settingsMenuTriggers.forEach(settingsMenuTrigger => {
-    const adjustMenuPlacement = debounce(function () {
-      const settingsMenuHolder = settingsMenuTrigger.parentElement;
-      const settingsMenu = settingsMenuHolder.querySelector('.ph.menu');
-      const settingsMenuTriggerRect = settingsMenuTrigger.getBoundingClientRect();
-      const settingsMenuHolderRect = settingsMenuHolder.getBoundingClientRect();
-      settingsMenu.style.top =
-        settingsMenuHolderRect.top - settingsMenuTriggerRect.top + settingsMenuTriggerRect.height + 'px';
-    }, 300);
+import Options from './options';
+import SettingsMenu from './menu';
+import A11y from './a11y';
 
-    adjustMenuPlacement();
+function Demo(options, el) {
+  this._init(options, el);
+}
 
-    const handleClickOutsideOverflowMenu = e => {
-      if (e.target == settingsMenuTrigger) return;
-
-      const settingsMenuHolder = settingsMenuTrigger.parentElement;
-      const settingsMenu = settingsMenuHolder.querySelector('.ph.menu');
-      const settingsMenuList = settingsMenuHolder.querySelector('.ph.menu > ul.ph');
-
-      if (settingsMenu.classList.contains('is-open')) {
-        if (!settingsMenuList.contains(e.target)) {
-          closeMenu();
-        }
-      }
-    };
-    const closeMenu = () => {
-      const settingsMenuHolder = settingsMenuTrigger.parentElement;
-      const settingsMenu = settingsMenuHolder.querySelector('.ph.menu');
-      const settingsMenuList = settingsMenuHolder.querySelector('.ph.menu > ul.ph');
-      resetIndexOfOptions();
-      removePreviouslySelectedMenuItem(settingsMenuList);
-      settingsMenu.classList.remove('is-open');
-      settingsMenuList.classList.remove('is-open');
-      settingsMenuTrigger.setAttribute('aria-expanded', false);
-      window.removeEventListener('resize', adjustMenuPlacement);
-      document.removeEventListener('click', handleClickOutsideOverflowMenu);
-    };
-
-    const openMenu = () => {
-      const settingsMenuHolder = settingsMenuTrigger.parentElement;
-      const settingsMenu = settingsMenuHolder.querySelector('.ph.menu');
-      const settingsMenuList = settingsMenuHolder.querySelector('.ph.menu > ul.ph');
-      updateAllOptions(settingsMenuList.querySelectorAll('li:not(.separator)'));
-      settingsMenu.classList.add('is-open');
-      settingsMenuList.classList.add('is-open');
-      settingsMenuTrigger.setAttribute('aria-expanded', true);
-      document.removeEventListener('click', handleClickOutsideOverflowMenu);
-      document.addEventListener('click', handleClickOutsideOverflowMenu);
-      window.removeEventListener('resize', adjustMenuPlacement);
-      window.addEventListener('resize', adjustMenuPlacement);
-    };
-    const handleMenuClick = e => {
-      const settingsMenuTrigger = e.target;
-      const settingsMenuHolder = settingsMenuTrigger.parentElement;
-      const settingsMenu = settingsMenuHolder.querySelector('.ph.menu');
-
-      if (settingsMenu.classList.contains('is-open')) {
-        closeMenu();
-      } else {
-        openMenu();
-      }
-    };
-
-    const updateAllOptions = nodes => {
-      allOptions = Array.prototype.slice.call(nodes).filter(node => !node.querySelector('[disabled]'));
-    };
-    const resetIndexOfOptions = () => {
-      indexOfOptions = 0;
-    };
-    let indexOfOptions = 0;
-    let allOptions = null;
-
-    const handleMenuKeypress = e => {
-      const settingsMenuTrigger = e.target;
-      const settingsMenuHolder = settingsMenuTrigger.parentElement;
-      const settingsMenuList = settingsMenuHolder.querySelector('.ph.menu > ul.ph');
-
-      if (e.key === 'Enter') {
-        e.stopPropagation();
-        e.preventDefault();
-
-        const selected = settingsMenuList.querySelector('li.is-focused');
-        if (settingsMenuList.classList.contains('is-open') && selected) {
-          resetIndexOfOptions();
-          closeMenu();
-        }
-        return false;
-      }
-
-      if (settingsMenuList.classList.contains('is-open')) {
-        if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
-          return false;
-        }
-
-        if (e.key == 'ArrowUp' || e.key == 'ArrowDown') {
-          let nextElement;
-          e.preventDefault();
-          if (e.key == 'ArrowUp') {
-            nextElement = allOptions[--indexOfOptions];
-            if (!nextElement) {
-              indexOfOptions = allOptions.length - 1;
-              nextElement = allOptions[indexOfOptions];
-            }
-
-            removePreviouslySelectedMenuItem(settingsMenuList);
-            nextElement.classList.add('is-focused');
-            nextElement.setAttribute('aria-selected', true);
-          } else if (e.key == 'ArrowDown') {
-            nextElement = allOptions[++indexOfOptions];
-            if (!nextElement) {
-              indexOfOptions = 0;
-              nextElement = allOptions[indexOfOptions];
-            }
-            removePreviouslySelectedMenuItem(settingsMenuList);
-            nextElement.classList.add('is-focused');
-            nextElement.setAttribute('aria-selected', true);
-          }
-        }
-      }
-    };
-
-    settingsMenuTrigger.removeEventListener('click', handleMenuClick);
-    settingsMenuTrigger.removeEventListener('keyup', handleMenuKeypress);
-    settingsMenuTrigger.addEventListener('click', handleMenuClick);
-    settingsMenuTrigger.addEventListener('keyup', handleMenuKeypress);
-  });
-};
-
-const setDefaultOpts = opts => {
-  let defaultOpts = {
-    position: 'center',
-    preset: false,
-    ui: true,
-    variants: [],
-    modifiers: [],
-    backgrounds: [],
-    interactions: []
-  };
-  opts.modifiers =
-    opts.modifiers && opts.modifiers.length !== 0
-      ? opts.modifiers.map(mod => (mod.group && mod.group !== '' ? mod : { ...mod, ...{ group: 'global' } }))
-      : [];
-
-  opts.variants = opts.variants.map(variant => {
-    if (variant.modifiers) {
-      variant.modifiers = variant.modifiers.map(mod =>
-        mod.group && mod.group !== '' ? mod : { ...mod, ...{ group: `${variant.name.replace(/\s/g, '-')}-modifiers` } }
-      );
-    }
-    return variant;
-  });
-
-  return { ...defaultOpts, ...opts };
-};
-
-const getInteraction = (opts, interaction) => opts.interactions.find(i => i.name == interaction);
-const getState = (opts, state) => opts.states.find(i => i.name == state);
-const getModifier = (modifiers, modifier) => modifiers.find(i => i.name == modifier);
-const getVariant = (opts, variant) => opts.variants.find(i => i.name == variant);
-
-const clear = el => {
-  const cNode = el.cloneNode(false);
-  el.parentNode.replaceChild(cNode, el);
-  return cNode;
-};
-
-const getDefaultClassNames = opts => {
-  const { variants } = opts;
-  if (isArrayUsable(variants)) {
-    return variants[0].classNames;
-  }
-  return '';
-};
-
-const setDefaultClassNames = (component, opts) => {
-  const cls = getDefaultClassNames(opts);
-  setClassNames(component, cls);
-};
-
-const setClassNames = (component, classNames) => {
-  if (!component) return;
-  if (!classNames || (classNames && classNames.length === 0)) return;
-  classNames.split(' ').forEach(cl => component.classList.add(cl));
-};
-
-const setAttributes = (component, attrs) => {
-  if (!component) return;
-  if (!attrs || (attrs && attrs.length === 0)) return;
-  Object.keys(attrs).forEach(key => component.setAttribute(key, attrs[key]));
-};
-
-const setPreviewAttributes = (component, attrs) => {
-  if (!component) return;
-  if (!attrs || (attrs && attrs.length === 0)) return;
-  const preview = component.closest('.ph.preview');
-  Object.keys(attrs).forEach(key => preview.setAttribute(key, attrs[key]));
-};
-
-const getDefaultModifier = opts => {
-  const { modifiers } = opts;
-  if (isArrayUsable(modifiers)) {
-    return modifiers[0];
-  }
-  return '';
-};
-
-const isArrayUsable = arr => arr && Array.isArray(arr) && arr.length !== 0;
-
-// @todo set defaults when preset is used
-const setDefaultModifier = (component, opts) => {
-  const modifier = getDefaultModifier(opts);
-  setClassNames(component, modifier.classNames);
-};
-
-const getDefaultInteraction = opts => {
-  const { interactions } = opts;
-  if (isArrayUsable(interactions)) {
-    return interactions[0].classNames;
-  }
-  return '';
-};
-
-const getDefaultInteractionPreviewAttributes = opts => {
-  const { interactions } = opts;
-  if (isArrayUsable(interactions)) {
-    return interactions[0].previewAttributes;
-  }
-  return '';
-};
-
-const setDefaultInteraction = (component, opts) => {
-  const cls = getDefaultInteraction(opts);
-  const previewAttrs = getDefaultInteractionPreviewAttributes(opts);
-  setClassNames(component, cls);
-  setPreviewAttributes(component, previewAttrs);
-};
-
-const getDefaultStateClassNames = opts => {
-  const { states } = opts;
-  if (isArrayUsable(states)) {
-    return states[0].classNames;
-  }
-  return '';
-};
-
-const getDefaultStateAttrs = opts => {
-  const { states } = opts;
-  if (isArrayUsable(states)) {
-    return states[0].attributes;
-  }
-  return '';
-};
-const setDefaultState = (component, opts) => {
-  const cls = getDefaultStateClassNames(opts);
-  const attrs = getDefaultStateAttrs(opts);
-  setClassNames(component, cls);
-  setAttributes(component, attrs);
-};
-
-const setDefaultLabel = (component, opts) => {
-  const { label } = opts;
-  if (label && label.length !== 0 && label !== '') {
-    component.textContent = label;
+Demo.prototype._set_initial = function (modifier) {
+  if (this.options[modifier]) {
+    classnames.set(this.component, this.options[modifier].classNames);
+    attributes.set(this.component, this.options[modifier].attributes);
+    attributes.set(this.preview_el, this.options[modifier].previewAttributes);
+    // markup.set(this.component, this.options.initial_variant.classNames);
   }
 };
 
-const setDefaultBackground = (component, opts) => {
-  if (!component) return;
-  const preview = component.closest('.ph.preview');
-  if (!preview) return;
-  const { backgrounds } = opts;
-  if (isArrayUsable(backgrounds)) {
-    const defaultBg = backgrounds.find(b => b.default);
-    if (defaultBg) {
-      preview.style.backgroundColor = defaultBg.color;
-    } else {
-      preview.style.backgroundColor = backgrounds[0].color;
-    }
-  }
+Demo.prototype._initial = function () {
+  this._set_initial('initial_variant');
+  this._set_initial('initial_modifier');
+  this._set_initial('initial_interaction');
+  this._set_initial('initial_state');
 };
 
-const setPresetDefaults = (component, opts) => {
-  setDefaultBackground(component, opts);
-  setDefaultClassNames(component, opts);
-  setDefaultModifier(component, opts);
-  setDefaultInteraction(component, opts);
-  setDefaultState(component, opts);
-  setDefaultLabel(component, opts);
-};
-const ID = function () {
-  // Math.random should be unique because of its seeding algorithm.
-  // Convert it to base 36 (numbers + letters), and grab the first 9 characters
-  // after the decimal.
-  return '_' + Math.random().toString(36).substr(2, 9);
+Demo.prototype._add_styles_to_component = function (styleAttrs) {
+  styles.add(this.component, styleAttrs);
 };
 
-const removeInteraction = (el, component, opts) => {
-  const currentInteraction = el.getAttribute('data-interaction');
-  const interaction = getInteraction(opts, currentInteraction);
-  if (interaction['classNames']) {
-    interaction['classNames'].split(' ').forEach(cl => component.classList.remove(cl));
-  }
-  if (interaction['previewAttributes']) {
-    const preview = component.closest('.ph.preview');
-    Object.keys(interaction['previewAttributes']).forEach(pA => {
-      preview.removeAttribute(pA);
-    });
-  }
+Demo.prototype._add_attributes_to_component = function (attrs) {
+  attributes.set(this.component, attrs);
 };
 
-const initStateOnChange = (input, component, opts) => {
-  input.addEventListener('change', e => {
-    const chosenState = e.target.getAttribute('data-state');
-    const state = getState(opts, chosenState);
-    if (state['classNames']) {
-      state['classNames'].split(' ').forEach(cl => component.classList.toggle(cl));
-    }
-    if (state['attributes']) {
-      Object.keys(state['attributes']).forEach(a => {
-        if (component.getAttribute(a) === state['attributes'][a]) {
-          component.removeAttribute(a);
-          if (a === 'disabled') {
-            input
-              .closest('.ph.configuration')
-              .querySelector('.interactions')
-              .querySelectorAll('input[type=checkbox]')
-              .forEach(el => el.removeAttribute('disabled'));
-          }
-        } else {
-          component.setAttribute(a, state['attributes'][a]);
-          input
-            .closest('.ph.configuration')
-            .querySelector('.interactions')
-            .querySelectorAll('input[type=checkbox]')
-            .forEach(el => {
-              el.setAttribute('disabled', 'disabled');
-              removeInteraction(el, component, opts);
-              el.checked = false;
-            });
-        }
-      });
-    }
-    if (state['previewAttributes']) {
-      const preview = component.closest('.ph.preview');
-      Object.keys(state['previewAttributes']).forEach(pA => {
-        if (preview.getAttribute(pA) === state['previewAttributes'][pA]) {
-          preview.removeAttribute(pA);
-        } else {
-          preview.setAttribute(pA, state['previewAttributes'][pA]);
-        }
-      });
-    }
-    updateHTML();
-  });
-};
-
-const initInteractionOnChange = (input, component, opts) => {
-  input.addEventListener('change', e => {
-    const chosenInteraction = e.target.getAttribute('data-interaction');
-    const interaction = getInteraction(opts, chosenInteraction);
-    if (interaction['classNames']) {
-      interaction['classNames'].split(' ').forEach(cl => component.classList.toggle(cl));
-    }
-    if (interaction['attributes']) {
-      Object.keys(interaction['attributes']).forEach(a => {
-        if (component.getAttribute(a) === interaction['attributes'][a]) {
-          component.removeAttribute(a);
-        } else {
-          component.setAttribute(a, interaction['attributes'][a]);
-        }
-      });
-    }
-    if (interaction['previewAttributes']) {
-      const preview = component.closest('.ph.preview');
-      Object.keys(interaction['previewAttributes']).forEach(pA => {
-        if (preview.getAttribute(pA) === interaction['previewAttributes'][pA]) {
-          preview.removeAttribute(pA);
-        } else {
-          preview.setAttribute(pA, interaction['previewAttributes'][pA]);
-        }
-      });
-    }
-  });
-};
-
-const removeVariantAttributes = (variant, opts, component) => {
-  const removeTheseAttributes = opts.variants.reduce((result, variant) => {
-    if (variant.attributes && Array.isArray(variant.attributes) && variant.attributes.length !== 0) {
-      const a = variant.attributes.map(v => {
+Demo.prototype._remove_styles_by_category = function (category) {
+  const styles_to_be_removed = this.options[category].reduce((result, cat) => {
+    if (isArrayUsable(cat.styles)) {
+      const a = cat.styles.map(v => {
         return v.key;
       });
 
@@ -498,12 +60,13 @@ const removeVariantAttributes = (variant, opts, component) => {
     }
     return result;
   }, []);
-  removeTheseAttributes.forEach(key => component.removeAttribute(key));
+  styles_to_be_removed.forEach(key => (this.component.style[key] = ''));
 };
-const removeVariantStyles = (variant, opts, component) => {
-  const removeTheseStyles = opts.variants.reduce((result, variant) => {
-    if (variant.styles && Array.isArray(variant.styles) && variant.styles.length !== 0) {
-      const a = variant.styles.map(v => {
+
+Demo.prototype._remove_attributes_by_category = function (category) {
+  const attributes_to_be_removed = this.options[category].reduce((result, cat) => {
+    if (isArrayUsable(cat.attributes)) {
+      const a = cat.attributes.map(v => {
         return v.key;
       });
 
@@ -511,25 +74,22 @@ const removeVariantStyles = (variant, opts, component) => {
     }
     return result;
   }, []);
-  removeTheseStyles.forEach(key => (component.style[key] = ''));
+  attributes_to_be_removed.forEach(key => this.component.removeAttribute(key));
 };
-const addVariantStyles = (variant, component) => {
-  if (variant['styles']) {
-    variant['styles'].forEach(style => (component.style[style.key] = style.value));
-  }
-};
-const addVariantAttributes = (variant, component) => {
-  if (variant['attributes']) {
-    variant['attributes'].forEach(({ key, value }) => component.setAttribute(key, value));
-  }
-};
-const removeClassNamesFromComponent = (component, cls) =>
-  cls.forEach(cl => cl.split(' ').forEach(cl => component.classList.remove(cl)));
 
-const removeVariantClassNames = (opts, component) => {
-  const removeTheseClasses = opts.variants.filter(e => e.classNames).map(e => e.classNames);
-  removeClassNamesFromComponent(component, removeTheseClasses);
-  const removeTheseModifiers = opts.variants
+Demo.prototype._remove_classnames_by_category = function (category) {
+  console.info('Demo._remove_classnames_by_category', category);
+  const remove_classnames_from_these = this.options[category].filter(e => e.classNames).map(e => e.classNames);
+
+  remove_classnames_from_these.forEach(classname => classnames.remove(this.component, classname));
+};
+
+Demo.prototype._get_groups = function (modifiers, group_name = 'group') {
+  return groupBy(modifiers, group_name);
+};
+
+Demo.prototype._remove_modifiers_by_category = function (category) {
+  const modifiers_to_be_removed = this.options[category]
     .filter(e => {
       if (e.modifiers && e.modifiers.length !== 0) return e.modifiers;
     })
@@ -540,1052 +100,1011 @@ const removeVariantClassNames = (opts, component) => {
       return result;
     }, []);
 
-  if (removeTheseModifiers && removeTheseModifiers.length !== 0) {
-    const groups = groupBy(removeTheseModifiers, 'group');
-    Object.keys(groups).forEach(groupName => {
-      const modifierGroup = document.querySelector(`.configuration form.modifiers .${groupName}`);
+  if (isArrayUsable(modifiers_to_be_removed)) {
+    const groups = this._get_groups(modifiers_to_be_removed, 'group');
+    Object.keys(groups).forEach(group_name => {
+      const modifierGroup = document.querySelector(`.configuration form.modifiers .${group_name}`);
       if (modifierGroup) modifierGroup.remove();
-      groups[groupName].forEach(modifier => {
+      groups[group_name].forEach(modifier => {
         if (modifier.classNames) {
           modifier.classNames.split(' ').forEach(cl => {
-            if (cl !== 'noop' && component.classList.contains(cl)) {
+            if (cl !== 'noop' && this.component.classList.contains(cl)) {
               console.info(`Removing class \`${cl}\` modifier \`${modifier.name}\` from current variant\``);
-              component.classList.remove(cl);
+              this.component.classList.remove(cl);
             }
           });
         } else if (modifier.markup) {
-          if (component.innerHTML.indexOf(modifier.markup) !== -1) {
-            component.innerHTML = '';
-            component.textContent = component.getAttribute('data-textContent');
+          if (this.component.innerHTML.indexOf(modifier.markup) !== -1) {
+            this.component.innerHTML = '';
+            this.component.textContent = this.component.getAttribute('data-textContent');
           }
         } else {
           console.info(`No classNames found for modifier \`${modifier.name}\``);
         }
       });
     });
-
-    updateHTML();
   }
 };
 
-const addVariantClassNames = (variant, component, opts) => {
-  const modifierForm = component.closest('.demo').querySelector('form.modifiers');
-  setClassNames(component, variant.classNames);
-  if (variant.modifiers) {
-    const cmOpts = {
-      form: modifierForm,
-      modifiers: variant.modifiers,
-      component,
-      opts,
-      variant
-    };
-    createModifiers(cmOpts);
-  } else {
-    if (opts.modifiers) {
-      if (opts.variants) {
-        opts.variants.forEach(variant => {
-          if (variant.modifiers) {
-            variant.modifiers.forEach(mod => {
-              const modEl = document.querySelector(
-                `input[data-modifier="${mod.name}"][data-modifier-group="${mod.group}"]`
-              );
-              if (modEl) {
-                const modElId = modEl.getAttribute('id');
-                const labelForModEl = document.querySelector(`label[for="${modElId}"]`);
+Demo.prototype._remove_modifier_controls_by_category = function (category) {
+  if (isArrayUsable(this.options.modifiers)) {
+    if (isArrayUsable(this.options[category])) {
+      this.optiions[category].forEach(cat => {
+        if (isArrayUsable(cat.modifiers)) {
+          cat.modifiers.forEach(mod => {
+            const mod_el = document.querySelector(
+              `input[data-modifier="${mod.name}"][data-modifier-group="${mod.group}"]`
+            );
+            if (mod_el) {
+              const mod_elId = mod_el.getAttribute('id');
+              const labelForModEl = document.querySelector(`label[for="${mod_elId}"]`);
 
-                modEl.remove();
-                labelForModEl.remove();
-              }
-            });
-          }
-        });
-      }
+              mod_el.remove();
+              labelForModEl.remove();
+            }
+          });
+        }
+      });
     }
   }
 };
 
-const initVariantOnChange = (select, component, opts) => {
-  select.addEventListener('change', e => {
-    const chosenVariant = e.target.value;
-    const variant = getVariant(opts, chosenVariant);
-
-    removeVariantStyles(variant, opts, component);
-    removeVariantAttributes(variant, opts, component);
-    removeVariantClassNames(opts, component);
-    addVariantStyles(variant, component);
-    addVariantAttributes(variant, component);
-    addVariantClassNames(variant, component, opts);
-    updateHTML();
-  });
+Demo.prototype._add_variant_classnames = function (variant) {
+  classnames.set(this.component, variant.classNames);
+  if (variant.modifiers) {
+    this._create_modifiers({
+      el: this.modifiers_form_el,
+      modifiers: variant.modifiers,
+      variant
+    });
+  } else {
+    this._remove_modifier_controls_by_category('variants');
+  }
 };
 
-const getCurrentModifier = ({ modifier, variant, opts, chosenModifier }) => {
+Demo.prototype._interaction_on_change = function (e) {
+  const chosen_interaction = e.target.getAttribute('data-interaction');
+  const interaction = this.options._get_interaction(chosen_interaction);
+
+  classnames.toggle(this.component, interaction.classNames);
+  attributes.toggle(this.component, interaction.attributes);
+  attributes.toggle(this.preview_el, interaction.previewAttributes);
+};
+
+Demo.prototype._init_remove_interaction = function (el) {
+  console.info('Demo._init_remove_interaction', el);
+  const current_interaction = el.getAttribute('data-interaction');
+  const interaction = this.options._get_interaction(current_interaction);
+  classnames.remove(this.component, interaction.classNames);
+  attributes.remove(this.preview_el, interaction.previewAttributes);
+};
+
+Demo.prototype._set_html = function (no_speccer = false) {
+  if (no_speccer) {
+    document.querySelectorAll('.speccer').forEach(el => el.remove());
+  }
+  html(this.html_el, this.preview_el).then(el => (this.html_el = el));
+  if (!no_speccer && !this._is_html_pane_active) {
+    setTimeout(
+      function () {
+        this._speccer();
+      }.bind(this),
+      300
+    );
+  }
+};
+
+Demo.prototype._init_interaction_on_change = function (input) {
+  input.removeEventListener('change', this._interaction_on_change.bind(this));
+  input.addEventListener('change', this._interaction_on_change.bind(this));
+};
+
+Demo.prototype._state_on_change = function (e) {
+  console.info('Demo._state_on_change', e);
+
+  const chosen_state = e.target.getAttribute('data-state');
+  const state = this.options._get_state(chosen_state);
+  const { name } = state;
+
+  /*
+  remove all state modifiers,
+  add current modifier
+  if(modifier IS NOT default) remove interactions
+  if(modifiers IS default) do NOT remove interactions
+  */
+
+  this.options.states.forEach(state => {
+    classnames.remove(this.component, state.classNames);
+    attributes.remove(this.component, state.attributes);
+    attributes.remove(this.previewEl, state.previewAttributes);
+  });
+
+  classnames.set(this.component, state.classNames);
+  attributes.set(this.component, state.attributes);
+  attributes.set(this.previewEl, state.previewAttributes);
+
+  if (name.toLowerCase() !== 'default') {
+    this.configuration_el
+      .querySelector('.interactions')
+      .querySelectorAll('input[type=checkbox]')
+      .forEach(el => {
+        el.setAttribute('disabled', 'disabled');
+        this._init_remove_interaction(el);
+        el.checked = false;
+      });
+  } else {
+    this.configuration_el
+      .querySelector('.interactions')
+      .querySelectorAll('input[type=checkbox]')
+      .forEach(el => el.removeAttribute('disabled'));
+  }
+
+  this._set_html();
+};
+
+Demo.prototype._init_state_on_change = function (input) {
+  input.removeEventListener('change', this._state_on_change.bind(this));
+  input.addEventListener('change', this._state_on_change.bind(this));
+};
+
+Demo.prototype._variants_on_change = function (e) {
+  console.info('Demo._variants_on_change', e);
+
+  const chosen_variant = e.target.value;
+  const variant = this.options._get_variant(chosen_variant);
+
+  this._remove_styles_by_category('variants');
+  this._remove_attributes_by_category('variants');
+  this._remove_classnames_by_category('variants');
+  this._remove_modifiers_by_category('variants');
+
+  this._add_styles_to_component(variant.styles);
+  this._add_attributes_to_component(variant.attributes);
+  this._add_variant_classnames(variant);
+
+  this._set_html();
+};
+
+Demo.prototype._init_variants_on_change = function (el) {
+  el.removeEventListener('change', this._variants_on_change.bind(this));
+  el.addEventListener('change', this._variants_on_change.bind(this));
+};
+
+Demo.prototype._get_current_modifier = function ({ modifier, variant, chosen_modifier }) {
   if (modifier) {
     return modifier;
   }
   if (variant) {
-    return getModifier(variant.modifiers, chosenModifier);
+    return this.options._get_modifier(chosen_modifier, variant.modifiers);
   }
-  return getModifier(opts.modifiers, chosenModifier);
+  return this.options._get_modifier(chosen_modifier);
 };
 
-const removeModifierClassNamesInGroup = ({ modifier, groups, group, component, variantName }) => {
-  group = group || modifier.group;
-  if (modifier.classNames) {
-    // Remove classNames for given modifier group
+Demo.prototype._modifier_on_change = function ({ e, modifier, variant }) {
+  console.info('Demo._modifier_on_change', { e, modifier, variant });
+  const input = e.target;
+  const group_name = input.getAttribute('data-modifier-group');
+
+  const chosen_modifier = input.getAttribute('data-modifier');
+  modifier = this._get_current_modifier({ modifier, variant, chosen_modifier });
+
+  const groups = variant ? this._get_groups(variant.modifiers) : this._get_groups(this.options.modifiers);
+  // If the modifier change is from a variant,
+  // only remove the modifier for the relevant variant group
+  if (variant) {
+    if (modifier.classNames) {
+      Object.keys(groups)
+        .filter(g => g === group_name)
+        .forEach(g =>
+          groups[g].forEach(group => {
+            classnames.remove(this.component, group.classNames);
+            attributes.remove(this.component, group.attributes);
+            attributes.remove(this.previewEl, group.previewAttributes);
+          })
+        );
+    }
+
+    if (e.target.checked) {
+      classnames.set(this.component, modifier.classNames);
+      markup.set(this.component, modifier.markup, modifier.position);
+    } else {
+      classnames.remove(this.component, modifier.classNames);
+      markup.remove(this.component, modifier.markup);
+    }
+  } else {
     Object.keys(groups)
-      .filter(g => g === group)
+      .filter(g => g === group_name)
       .forEach(g =>
-        groups[g].forEach(g => {
-          if (g.classNames) {
-            g.classNames.split(' ').forEach(cl => {
-              if (cl !== 'noop' && component.classList.contains(cl)) {
-                console.info(
-                  variantName
-                    ? `Removing class \`${cl}\` modifier \`${modifier.name}\` from component variant \`${variantName}\``
-                    : `Removing class \`${cl}\` modifier \`${modifier.name}\` from current variant\``,
-                  component
-                );
-                component.classList.remove(cl);
-              }
-            });
-          } else {
-            console.info(`No classNames found for modifier \`${modifier.name}\``);
-          }
+        groups[g].forEach(group => {
+          classnames.remove(this.component, group.classNames);
+          attributes.remove(this.component, group.attributes);
+          attributes.remove(this.previewEl, group.previewAttributes);
         })
       );
-  }
-};
-
-const removeModifierAttributes = ({ modifier, component }) => {
-  if (modifier.attributes) {
-    Object.keys(modifier.attributes).forEach(a => {
-      if (component.getAttribute(a) === modifier.attributes[a]) {
-        component.removeAttribute(a);
-      }
-    });
-  }
-};
-
-const addModifierAttributes = ({ modifier, component }) => {
-  if (modifier.attributes) {
-    Object.keys(modifier.attributes).forEach(a => {
-      if (component.getAttribute(a) !== modifier.attributes[a]) {
-        component.setAttribute(a, modifier.attributes[a]);
-      }
-    });
-  }
-};
-const toggleModifierAttributes = ({ modifier, component, group, groups }) => {
-  if (modifier.attributes) {
-    Object.keys(modifier.attributes).forEach(a => {
-      if (component.getAttribute(a) === modifier.attributes[a]) {
-        component.removeAttribute(a);
-      } else {
-        component.setAttribute(a, modifier.attributes[a]);
-      }
-    });
-  }
-};
-
-const toggleModifierClassNames = ({ modifier, groups, group, component, variantName }) => {
-  removeModifierClassNamesInGroup({ modifier, groups, group, component, variantName });
-  setClassNames(component, modifier.classNames);
-};
-
-const removeModifierPreviewAttributes = ({ modifier, component }) => {
-  if (modifier.previewAttributes) {
-    const preview = component.closest('.ph.preview');
-    Object.keys(modifier.previewAttributes).forEach(pA => {
-      if (preview.getAttribute(pA) === modifier.previewAttributes[pA]) {
-        preview.removeAttribute(pA);
-      }
-    });
-  }
-};
-
-const addModifierPreviewAttributes = ({ modifier, component }) => {
-  if (modifier.previewAttributes) {
-    const preview = component.closest('.ph.preview');
-    Object.keys(modifier.previewAttributes).forEach(pA => {
-      if (preview.getAttribute(pA) !== modifier.previewAttributes[pA]) {
-        preview.setAttribute(pA, modifier.previewAttributes[pA]);
-      }
-    });
-  }
-};
-const toggleModifierPreviewAttributes = ({ modifier, component }) => {
-  if (modifier.previewAttributes) {
-    const preview = component.closest('.ph.preview');
-    Object.keys(modifier.previewAttributes).forEach(pA => {
-      if (preview.getAttribute(pA) === modifier.previewAttributes[pA]) {
-        preview.removeAttribute(pA);
-      } else {
-        preview.setAttribute(pA, modifier.previewAttributes[pA]);
-      }
-    });
-  }
-};
-
-const modifierOnChangeFactory = ({ input, component, opts, modifier, variant }) => e => {
-  let chosenModifier;
-  const group = e.target.getAttribute('data-modifier-group');
-
-  chosenModifier = e.target.getAttribute('data-modifier');
-  modifier = getCurrentModifier({ modifier, variant, opts, chosenModifier });
-
-  let groups;
-  // If the modifier change is from a variant,
-  // only remove the modifier for the relevant variant group
-  if (variant) {
-    groups = getGroups(variant.modifiers);
-    if (modifier.classNames) {
-      toggleModifierClassNames({ modifier, groups, group, component, variantName: variant.name });
-    }
-  } else {
-    groups = getGroups(opts.modifiers);
-    // Remove all modifier classNames
-    Object.keys(groups).forEach(g =>
-      groups[g].forEach(g => {
-        if (g.classNames) {
-          g.classNames.split(' ').forEach(cl => {
-            if (cl !== 'noop' && component.classList.contains(cl)) {
-              console.info(
-                `Removing class \`${cl}\` from modifier \`${g.name}\` from current component \`${component}\``
-              );
-              component.classList.remove(cl);
-            }
-          });
-        } else if (g.attributes) {
-          Object.keys(g.attributes).forEach(a => {
-            if (component.getAttribute(a) === g.attributes[a]) {
-              component.removeAttribute(a);
-            }
-          });
-        } else if (g.previewAttributes) {
-          const preview = component.closest('.ph.preview');
-          Object.keys(g.previewAttributes).forEach(pA => {
-            if (preview.getAttribute(pA) === g.previewAttributes[pA]) {
-              preview.removeAttribute(pA);
-            }
-          });
-        } else {
-          console.info(`No modifiers to remove for modifier group \`${g}\``);
-        }
-      })
-    );
-    // Add current modifiers
-    if (modifier.classNames) {
-      setClassNames(component, modifier.classNames);
-    } else if (modifier.attributes) {
-      Object.keys(modifier.attributes).forEach(a => {
-        component.setAttribute(a, modifier.attributes[a]);
-      });
-    } else if (modifier.previewAttributes) {
-      const preview = component.closest('.ph.preview');
-      Object.keys(modifier.previewAttributes).forEach(pA => {
-        preview.setAttribute(pA, modifier.previewAttributes[pA]);
-      });
-    }
-
-    // toggleModifierClassNames({ modifier, groups, group, component });
-    // toggleModifierAttributes({ modifier, component, groups, group });
-    // toggleModifierPreviewAttributes({ modifier, component });
-  }
-};
-
-const modifierOnChangeToggleFactory = ({ input, component, opts, modifier, variant }) => e => {
-  let chosenModifier;
-  const group = e.target.getAttribute('data-modifier-group');
-
-  chosenModifier = e.target.getAttribute('data-modifier');
-
-  modifier = getCurrentModifier({ modifier, variant, opts, chosenModifier });
-
-  let groups;
-  // If the modifier change is from a variant,
-  // only remove the modifier for the relevant variant group
-  if (variant) {
-    groups = getGroups(variant.modifiers);
-    if (modifier.classNames) {
-      if (!input.checked) {
-        removeModifierClassNamesInGroup({ modifier, groups, group, component, variantName: variant.name });
-      } else {
-        setClassNames(component, modifier.classNames);
-      }
-    }
-  } else {
-    groups = getGroups(opts.modifiers);
-    if (modifier.classNames) {
-      if (!input.checked) {
-        removeModifierClassNamesInGroup({ modifier, groups, group, component });
-        removeModifierAttributes({ modifier, component });
-        removeModifierPreviewAttributes({ modifier, component });
-      } else {
-        setClassNames(component, modifier.classNames);
-        addModifierAttributes({ modifier, component });
-        addModifierPreviewAttributes({ modifier, component });
-      }
-    }
-    if (modifier.attributes) {
-      if (!input.checked) {
-        removeModifierAttributes({ modifier, component });
-      } else {
-        addModifierAttributes({ modifier, component });
-      }
-    }
-  }
-  if (modifier.markup) {
-    const { markup, position } = modifier;
-    if (component.innerHTML.indexOf(markup) === -1) {
-      component.setAttribute('data-textContent', component.textContent);
-      if (position === 'before') {
-        component.innerHTML = markup + component.textContent;
-      } else {
-        component.innerHTML = component.textContent + markup;
-      }
+    if (e.target.checked) {
+      classnames.set(this.component, modifier.classNames);
+      markup.set(this.component, modifier.markup, modifier.position);
+      attributes.set(this.component, modifier.attributes);
+      attributes.set(this.previewEl, modifier.previewAttributes);
+      this._set_child_modifiers(modifier, input.closest('fieldset'));
     } else {
-      component.innerHTML = '';
-      component.textContent = component.getAttribute('data-textContent');
+      classnames.remove(this.component, modifier.classNames);
+      markup.remove(this.component, modifier.markup);
+      attributes.remove(this.component, modifier.attributes);
+      attributes.remove(this.previewEl, modifier.previewAttributes);
+      this._remove_child_modifiers(modifier, input.closest('fieldset'));
     }
   }
-  updateHTML();
-};
-const getCurrentGroup = ({ modifier, modifiers }) => modifiers.filter(m => m.name === modifier).map(m => m.group)[0];
-const modifierOnSelectChangeFactory = ({ component, opts, variant }) => e => {
-  const chosenModifier = e.target.value;
-  const modifier = getCurrentModifier({ modifier: false, variant, opts, chosenModifier });
-  const group = getCurrentGroup({ modifier: chosenModifier, modifiers: variant ? variant.modifiers : opts.modifiers });
-  const groups = variant ? getGroups(variant.modifiers) : getGroups(opts.modifiers);
-  // If the modifier change is from a variant,
-  // only remove the modifier for the relevant variant group
-  if (variant) {
-    if (modifier.classNames) {
-      toggleModifierClassNames({ modifier, groups, group, component, variantName: variant.name });
-    }
-  } else {
-    toggleModifierClassNames({ modifier, groups, group, component });
-    toggleModifierAttributes({ modifier, component });
-    toggleModifierPreviewAttributes({ modifier, component });
-  }
+  this._set_html();
 };
 
-const initModifierOnChange = ({ select, input, component, opts, modifier, variant }) => {
-  if (select) {
-    select.addEventListener('change', modifierOnSelectChangeFactory({ component, opts, variant }));
-  } else if (input.classList.contains('toggle')) {
-    input.addEventListener('change', modifierOnChangeToggleFactory({ input, component, opts, modifier, variant }));
-  } else {
-    input.addEventListener('change', modifierOnChangeFactory({ input, component, opts, modifier, variant }));
-  }
-};
+Demo.prototype._set_child_modifiers = function (modifier, el) {
+  console.info('Demo._set_child_modifiers', modifier, el);
+  if (!isArrayUsable(modifier.modifiers)) return;
 
-const initForm = name => {
-  const fragment = document.createDocumentFragment();
-
-  const form = document.createElement('form');
-  form.classList.add('ph');
-  form.classList.add(name);
-
-  fragment.appendChild(form);
-
-  return fragment;
-};
-const initModifiersForm = () => initForm('modifiers');
-
-const initStatesForm = () => initForm('states');
-
-const initInteractionsForm = () => initForm('interactions');
-const initVariantsForm = () => initForm('variants');
-
-const groupBy = (list, key) =>
-  [...list].reduce((acc, x) => {
-    const group = x[key];
-    if (!acc[group]) {
-      return {
-        ...acc,
-        [group]: [x]
-      };
-    }
-    return {
-      ...acc,
-      [group]: [...acc[group], x]
-    };
-  }, {});
-
-const getGroups = modifier => groupBy(modifier, 'group');
-const getGroupNames = modifier => Object.keys(getGroups(modifier));
-
-const createModifierRadioFactory = ({ component, opts, selectionControls, variant }) => (modifier, index) => {
-  const { name, group } = modifier;
-  const _id = ID();
-  const label = document.createElement('label');
-  label.classList.add('ph');
-  label.setAttribute('for', _id);
-  label.textContent = humanizeString(name);
-
-  const input = document.createElement('input');
-
-  input.setAttribute('id', _id);
-  input.setAttribute('data-modifier', name);
-  input.classList.add('ph');
-  if (group && group !== '') {
-    input.classList.add('selection-control');
-    input.setAttribute('type', 'radio');
-    input.setAttribute('name', `radio-modifiers-${group}`);
-    input.setAttribute('data-modifier-group', group);
-    if (index === 0) {
-      input.checked = true;
-    }
-  } else {
-    input.classList.add('toggle');
-    input.setAttribute('type', 'checkbox');
-    input.setAttribute('data-size', 'large');
-    input.setAttribute('name', _id);
-  }
-
-  initModifierOnChange({ input, component, opts, modifier, variant });
-
-  selectionControls.classList.add('ph');
-  selectionControls.classList.add('selection-controls');
-  selectionControls.appendChild(input);
-  selectionControls.appendChild(label);
-};
-
-const createModifierToggleFactory = ({ component, opts, selectionControls, variant }) => modifier => {
-  const { name, group } = modifier;
-  const _id = ID();
-  const label = document.createElement('label');
-  label.classList.add('ph');
-  label.setAttribute('for', _id);
-  label.textContent = humanizeString(name);
-
-  const input = document.createElement('input');
-
-  input.setAttribute('id', _id);
-  input.setAttribute('data-modifier', name);
-  if (variant) {
-    input.setAttribute('data-variant', variant.name);
-  }
-  input.setAttribute('data-modifier-group', group);
-  input.classList.add('ph');
-
-  input.classList.add('toggle');
-  input.setAttribute('type', 'checkbox');
-  input.setAttribute('data-size', 'large');
-  input.setAttribute('name', _id);
-
-  initModifierOnChange({ input, component, opts, modifier, variant });
-
-  selectionControls.classList.add('ph');
-  selectionControls.classList.add('selection-controls');
-  selectionControls.appendChild(input);
-  selectionControls.appendChild(label);
-};
-
-const createModifiersSelectBox = ({ fragment, component, opts, variant }) => {
-  const groups = variant ? getGroups(variant.modifiers) : getGroups(opts.modifiers);
-  Object.keys(groups).forEach(groupName => {
-    const group = groups[groupName];
-
-    const inputWrapper = document.createElement('div');
-    inputWrapper.classList.add(groupName);
-    inputWrapper.classList.add('ph');
-    inputWrapper.classList.add('input-wrapper');
-    const label = document.createElement('label');
-    label.classList.add('ph');
-    const _id = ID();
-    label.setAttribute('for', _id);
-    label.textContent = humanizeString(groupName);
-
-    const select = document.createElement('select');
-    select.setAttribute('data-modifier-group', groupName);
-
-    select.setAttribute('id', _id);
-    select.classList.add('ph');
-    select.setAttribute('data-size', 'medium');
-    select.setAttribute('name', _id);
-    group.forEach((modifier, index) => {
-      const { name } = modifier;
-      const option = document.createElement('option');
-      option.setAttribute('data-modifier', name);
-      option.setAttribute('value', name);
-      option.textContent = name;
-      if (index === 0) {
-        option.setAttribute('selected', '');
-      }
-
-      select.appendChild(option);
-    });
-
-    initModifierOnChange({ select, modifiers: group, component, opts, variant });
-
-    inputWrapper.appendChild(select);
-    inputWrapper.appendChild(label);
-    fragment.appendChild(inputWrapper);
+  this._create_modifiers({
+    el: el,
+    modifiers: modifier.modifiers,
+    child: true
   });
 };
-const createModifiers = ({ form, modifiers, component, opts, variant }) => {
-  const fragment = document.createDocumentFragment();
 
-  const groupNames = getGroupNames(modifiers);
-  if (modifiers.length > 7) {
-    createModifiersSelectBox({ fragment, component, opts, variant });
-  } else if (modifiers.length > 1 && groupNames.length <= 1) {
-    const selectionControls = document.createElement('div');
-    const fieldset = document.createElement('fieldset');
-    fieldset.classList.add('ph');
+Demo.prototype._remove_child_modifiers = function (modifier, el) {
+  console.info('Demo._remove_child_modifiers', modifier, el);
+  if (!isArrayUsable(modifier.modifiers)) return;
 
-    const legend = document.createElement('legend');
-    legend.classList.add('ph');
-    const inputWrapper = document.createElement('div');
-    if (groupNames && groupNames.length) {
-      legend.textContent = humanizeString(groupNames[0]);
-      inputWrapper.classList.add(groupNames[0]);
+  modifier.modifiers.forEach(modifier =>
+    el.querySelector(`[data-modifier-group=${modifier.group}]`).closest('.selection-controls').remove()
+  );
+};
+
+Demo.prototype._init_modifier_on_change = function ({ input_el, modifier, variant }) {
+  input_el.removeEventListener(
+    'change',
+    function (e) {
+      this._modifier_on_change({ e, modifier, variant });
+    }.bind(this)
+  );
+  input_el.addEventListener(
+    'change',
+    function (e) {
+      this._modifier_on_change({ e, modifier, variant });
+    }.bind(this)
+  );
+};
+
+Demo.prototype._speccer = function () {
+  if (this.options.can_use_speccer) {
+    if (window.speccer) {
+      window.speccer();
     } else {
-      inputWrapper.classList.add('modifiers');
-      legend.textContent = 'Modifiers';
+      this._activate_speccer();
     }
-    modifiers.forEach(createModifierRadioFactory({ component, opts, selectionControls, variant }));
-    inputWrapper.classList.add('ph');
-    inputWrapper.classList.add('input-wrapper');
-    inputWrapper.appendChild(fieldset);
-    fieldset.appendChild(legend);
-    fieldset.appendChild(selectionControls);
+  }
+};
 
-    fragment.appendChild(inputWrapper);
-  } else {
-    // Create separate fieldsets per group
-    const groups = getGroups(modifiers);
-    Object.keys(groups).forEach(groupName => {
-      const modifiers = groups[groupName];
-      const selectionControls = document.createElement('div');
-      const fieldset = document.createElement('fieldset');
-      fieldset.classList.add('ph');
+Demo.prototype._init_speccer = function () {
+  if (this.options.can_use_speccer) {
+    stylesheet({ href: 'https://unpkg.com/@phun-ky/speccer@3.3.11/speccer.css', id: 'speccer_css' });
 
-      const legend = document.createElement('legend');
-      legend.classList.add('ph');
-      const inputWrapper = document.createElement('div');
+    script({
+      id: 'speccer_js',
+      src: 'https://unpkg.com/@phun-ky/speccer@3.3.11/speccer.js',
+      callback: () => {
+        let speccerEventFunc;
+        console.info('[@phun-ky/speccer]: Activated speccer ');
 
-      inputWrapper.classList.add(groupName);
-      legend.textContent = humanizeString(groupName);
-      modifiers.forEach(createModifierToggleFactory({ component, opts, selectionControls, variant }));
-      inputWrapper.classList.add('ph');
-      inputWrapper.classList.add('input-wrapper');
-      inputWrapper.appendChild(fieldset);
-      fieldset.appendChild(legend);
-      fieldset.appendChild(selectionControls);
+        window.speccer();
 
-      fragment.appendChild(inputWrapper);
+        speccerEventFunc = debounce(function () {
+          console.info('[@phun-ky/speccer]: Event resize triggered');
+          window.speccer();
+        }, 300);
+
+        setTimeout(function () {
+          window.speccer();
+        }, 500);
+
+        window.addEventListener('resize', speccerEventFunc);
+      },
+      attrs: {
+        'data-manual': 'data-manual'
+      }
     });
   }
-
-  form.appendChild(fragment);
 };
-const createStates = ({ form, states, component, opts }) => {
+
+Demo.prototype._init = function (options, el) {
+  this.options = new Options(options, el);
+
+  this.root_el = this._root(el);
+
+  if (!this.options.markup || (this.options.markup && this.options.markup === '')) {
+    throw 'No markup found. Please supply markup';
+  }
+
+  this._is_html_pane_active = false;
+  this._is_a11y_pane_active = false;
+
+  this._ui();
+  this._markup();
+
+  // Set initial background color
+  this.preview_el.style.backgroundColor = this.options.background_color;
+
+  // Only display component
+  if (this.options.preset) {
+    this._initial();
+  } else {
+    // Set initial classNames
+    classnames.set(this.component, this.options.variants[0].classNames);
+
+    if (this.options.ui) {
+      this._settings_backgrounds();
+      this._drawer();
+      const _settings_menu = document.querySelector('.ph.js-settings-menu');
+      this.settings_menu = new SettingsMenu(_settings_menu);
+
+      this._init_speccer();
+      this._init_a11y();
+    }
+  }
+};
+
+Demo.prototype._create_single_variant_control = function () {
+  if (!isArrayUsable(this.options.variants)) return;
+  const { name } = this.options.variants[0];
+
+  const title = node.create({ type: 'span', classNames: 'ph component-title', textContent: name });
+  this.variants_form_el.appendChild(title);
+};
+
+Demo.prototype._create_global_modifiers_controls = function () {
+  console.info('Demo._create_global_modifiers_controls', this.options.modifiers);
+  if (!isArrayUsable(this.options.modifiers)) return;
+
   const fragment = document.createDocumentFragment();
 
-  const inputWrapper = document.createElement('div');
-  inputWrapper.classList.add('ph');
-  inputWrapper.classList.add('input-wrapper');
+  const groups = this._get_modifiers_groups(this.options.modifiers);
 
-  const fieldset = document.createElement('fieldset');
-  fieldset.classList.add('ph');
+  Object.keys(groups).forEach(group_name => {
+    fragment.appendChild(this._create_modifier_group({ groups, group_name }));
+  });
 
-  const legend = document.createElement('legend');
-  legend.classList.add('ph');
-  legend.textContent = 'States';
+  this.modifiers_form_el.appendChild(fragment);
+};
 
-  const selectionControls = document.createElement('div');
+Demo.prototype._create_states_controls = function () {
+  console.info('Demo._create_states_controls', this.options.states);
+  if (!isArrayUsable(this.options.states)) return;
+  const fragment = document.createDocumentFragment();
 
-  selectionControls.classList.add('ph');
-  selectionControls.classList.add('selection-controls');
-  states.forEach(state => {
-    const _id = ID();
-    const label = document.createElement('label');
-    label.classList.add('ph');
-    label.setAttribute('for', _id);
-    label.textContent = state.name;
+  const input_wrapper_el = node.create({ classNames: 'ph input-wrapper' });
 
-    const input = document.createElement('input');
-    input.setAttribute('type', 'checkbox');
-    input.setAttribute('name', _id);
-    input.setAttribute('id', _id);
-    input.setAttribute('data-state', state.name);
-    input.classList.add('ph');
-    input.classList.add('selection-control');
+  const fieldset_el = node.create({ type: 'fieldset' });
+  const legend_el = node.create({ type: 'legend', textContent: 'States' });
 
-    initStateOnChange(input, component, opts);
+  const selection_controls_el = node.create({ classNames: 'ph selection-controls' });
 
-    selectionControls.appendChild(input);
-    selectionControls.appendChild(label);
+  this.options.states.forEach(state => {
+    const { name } = state;
+    const _id = uniqueID();
+    const label_el = node.create({
+      type: 'Label',
+      classNames: 'ph',
+      attrs: {
+        for: _id
+      },
+      textContent: name
+    });
+
+    const input_el = node.create({
+      type: 'input',
+      classNames: 'ph selection-control',
+      attrs: {
+        type: 'radio',
+        name: 'radio-modifiers-state',
+        id: _id,
+        'data-state': name
+      }
+    });
+    if (name.toLowerCase() === 'default') {
+      input_el.checked = true;
+    }
+
+    this._init_state_on_change(input_el);
+
+    selection_controls_el.appendChild(input_el);
+    selection_controls_el.appendChild(label_el);
+  });
+
+  fieldset_el.appendChild(legend_el);
+  fieldset_el.appendChild(selection_controls_el);
+  input_wrapper_el.appendChild(fieldset_el);
+  this.states_form_el.appendChild(input_wrapper_el);
+
+  this.states_form_el.appendChild(fragment);
+};
+Demo.prototype._create_interactions_controls = function () {
+  if (!isArrayUsable(this.options.interactions)) return;
+
+  const fragment = document.createDocumentFragment();
+
+  const input_wrapper_el = node.create({ classNames: 'ph input-wrapper' });
+
+  const fieldset = node.create({ type: 'fieldset', classNames: 'ph' });
+  const legend = node.create({ type: 'legend', classNames: 'ph', textContent: 'Interactions' });
+
+  const selection_controls_el = node.create({ classNames: 'ph selection-controls' });
+
+  this.options.interactions.forEach(interaction => {
+    const { name } = interaction;
+    const _id = uniqueID();
+
+    const label = node.create({
+      type: 'label',
+      classNames: 'ph',
+      attrs: {
+        for: _id
+      },
+      textContent: name
+    });
+
+    const input = node.create({
+      type: 'input',
+      classNames: 'ph toggle',
+      attrs: {
+        type: 'checkbox',
+        name: _id,
+        id: _id,
+        'data-interaction': name
+      }
+    });
+
+    this._init_interaction_on_change(input);
+
+    selection_controls_el.appendChild(input);
+    selection_controls_el.appendChild(label);
   });
 
   fieldset.appendChild(legend);
-  fieldset.appendChild(selectionControls);
-  inputWrapper.appendChild(fieldset);
-  form.appendChild(inputWrapper);
+  fieldset.appendChild(selection_controls_el);
+  input_wrapper_el.appendChild(fieldset);
+  this.interactions_form_el.appendChild(input_wrapper_el);
 
-  form.appendChild(fragment);
-};
-const createInteractions = ({ form, interactions, component, opts }) => {
-  const fragment = document.createDocumentFragment();
-
-  const inputWrapper = document.createElement('div');
-  inputWrapper.classList.add('ph');
-  inputWrapper.classList.add('input-wrapper');
-
-  const fieldset = document.createElement('fieldset');
-  fieldset.classList.add('ph');
-
-  const legend = document.createElement('legend');
-  legend.classList.add('ph');
-  legend.textContent = 'Interactions';
-
-  const selectionControls = document.createElement('div');
-
-  selectionControls.classList.add('ph');
-  selectionControls.classList.add('selection-controls');
-  interactions.forEach(interaction => {
-    const _id = ID();
-    const label = document.createElement('label');
-    label.classList.add('ph');
-    label.setAttribute('for', _id);
-    label.textContent = interaction.name;
-
-    const input = document.createElement('input');
-    input.setAttribute('type', 'checkbox');
-    input.setAttribute('name', _id);
-    input.setAttribute('id', _id);
-    input.setAttribute('data-interaction', interaction.name);
-    input.classList.add('ph');
-    input.classList.add('selection-control');
-
-    initInteractionOnChange(input, component, opts);
-
-    selectionControls.appendChild(input);
-    selectionControls.appendChild(label);
-  });
-
-  fieldset.appendChild(legend);
-  fieldset.appendChild(selectionControls);
-  inputWrapper.appendChild(fieldset);
-  form.appendChild(inputWrapper);
-
-  form.appendChild(fragment);
+  this.interactions_form_el.appendChild(fragment);
 };
 
-const setConfigurationDrawer = (component, el, opts) => {
-  el.appendChild(initVariantsForm());
-
-  el.appendChild(initInteractionsForm());
-  el.appendChild(initStatesForm());
-  el.appendChild(initModifiersForm());
-  const variantsForm = el.querySelector('.ph.configuration form.variants');
-  const modifiersForm = el.querySelector('.ph.configuration form.modifiers');
-  const interactionsForm = el.querySelector('.ph.configuration form.interactions');
-  const statesForm = el.querySelector('.ph.configuration form.states');
-
-  if (opts && component) {
-    const { variants } = opts;
-    if (isArrayUsable(variants)) {
-      console.info('[setConfigurationDrawer]: Creating variants');
-      createVariants(variantsForm, variants, component, opts);
-    }
-  }
-  if (opts && component) {
-    const { interactions, states, modifiers } = opts;
-
-    if (isArrayUsable(interactions)) {
-      console.info('[setConfigurationDrawer]: Creating interractions');
-      createInteractions({ form: interactionsForm, interactions, component, opts });
-    }
-    if (isArrayUsable(states)) {
-      console.info('[setConfigurationDrawer]: Creating states');
-      createStates({ form: statesForm, states, component, opts });
-    }
-    if (modifiers && Array.isArray(modifiers) && modifiers.length !== 0) {
-      console.info('[setConfigurationDrawer]: Creating modifiers');
-      createModifiers({ form: modifiersForm, modifiers, component, opts });
-    }
-  }
-};
-
-const createSingleVariant = (form, variant) => {
-  const { name } = variant;
-  const componentTitleElement = document.createElement('span');
-  componentTitleElement.classList.add('ph');
-  componentTitleElement.classList.add('component-title');
-  componentTitleElement.textContent = name;
-  form.appendChild(componentTitleElement);
-};
-
-const createVariants = (form, variants, component, opts) => {
-  if (variants.length === 1) {
-    createSingleVariant(form, variants[0]);
+Demo.prototype._create_variants_controls = function () {
+  console.info('Demo.__create_variants_controls');
+  if (!isArrayUsable(this.options.variants)) return;
+  if (this.options.variants.length === 1) {
+    console.info('Demo.__create_variants_controls:: Creating single variant control');
+    this._create_single_variant_control();
   } else {
-    const _id = ID();
-    const select = document.createElement('select');
+    console.info('Demo.__create_variants_controls:: Creating variant controls');
+    const _id = uniqueID();
+    const select = node.create({
+      type: 'select',
+      classNames: 'ph',
+      atts: {
+        id: _id,
+        name: _id
+      }
+    });
 
-    select.setAttribute('id', _id);
-    select.classList.add('ph');
-    select.setAttribute('data-size', 'medium');
-    select.setAttribute('name', _id);
-    variants.forEach((variant, index) => {
+    this.options.variants.forEach((variant, index) => {
       const { name } = variant;
-      const option = document.createElement('option');
-      option.setAttribute('data-variant', name);
-      option.setAttribute('value', name);
-      option.textContent = name;
+      const option = node.create({
+        type: 'option',
+        textContent: name,
+        attrs: {
+          'data-variant': name,
+          value: name
+        }
+      });
+
       if (index === 0) {
         option.setAttribute('selected', '');
         if (variant.modifiers) {
-          const modifierForm = form.closest('.demo').querySelector('form.modifiers');
-
-          const cmOpts = {
-            form: modifierForm,
+          this._create_modifiers({
+            el: this.modifiers_form_el,
             modifiers: variant.modifiers,
-            component,
-            opts,
             variant
-          };
-          console.info('[createVariants]: Creating variant modifiers');
-          createModifiers(cmOpts);
+          });
         }
       }
 
       select.appendChild(option);
-
-      initVariantOnChange(select, component, opts);
-      form.appendChild(select);
     });
+    this._init_variants_on_change(select);
+    this.variants_form_el.appendChild(select);
   }
 };
 
-const createBackgrounds = (el, backgrounds) => {
-  if (backgrounds && Array.isArray(backgrounds) && backgrounds.length !== 0) {
+Demo.prototype._get_modifiers_groups = function (modifiers) {
+  const a = groupBy(modifiers, 'group');
+  console.info('Demo._get_modifiers_groups', modifiers, a);
+  return a;
+};
+Demo.prototype._get_modifiers_group_names = function (modifiers) {
+  return Object.keys(this._get_modifiers_groups(modifiers));
+};
+
+Demo.prototype._create_modifier_group = function ({ groups, group_name, variant, child = false }) {
+  const modifiers = groups[group_name];
+  const fieldset_el = node.create({ type: 'fieldset', classNames: 'ph' });
+
+  const legend_el = node.create({ type: 'legend', classNames: 'ph', textContent: humanize(group_name) });
+  const input_wrapper_el = node.create({ classNames: `ph input-wrapper ${group_name}` });
+  input_wrapper_el.appendChild(fieldset_el);
+  fieldset_el.appendChild(legend_el);
+
+  const selection_controls_el = node.create({ classNames: 'ph' });
+  selection_controls_el.classList.add('ph');
+  selection_controls_el.classList.add('selection-controls');
+  // If the group only contains 1 modifier
+  // we only produce checkboxes
+  modifiers.forEach(modifier => {
+    this._create_modifier_group_items({ modifier, selection_controls_el, variant, checkbox: modifiers.length === 1 });
+  });
+
+  if (!child) {
+    fieldset_el.appendChild(selection_controls_el);
+    return input_wrapper_el;
+  } else {
+    return selection_controls_el;
+  }
+};
+
+Demo.prototype._create_modifier_group_items = function ({ modifier, selection_controls_el, variant, checkbox }) {
+  const { name, group } = modifier;
+  const _id = uniqueID();
+  const label_el = node.create({
+    type: 'label',
+    classNames: 'ph',
+    textContent: humanize(name),
+    attrs: {
+      for: _id
+    }
+  });
+
+  const input_el = node.create({
+    type: 'input',
+    classNames: 'ph selection-control',
+    attrs: {
+      id: _id,
+      'data-modifier': name,
+      'data-modifier-group': group,
+      type: checkbox ? 'checkbox' : 'radio',
+      name: checkbox ? _id : `radio-modifiers-${group}`
+    }
+  });
+
+  if (name.toLowerCase() === 'default') {
+    input_el.checked = true;
+  }
+
+  this._init_modifier_on_change({ input_el, modifier, variant });
+
+  selection_controls_el.appendChild(input_el);
+  selection_controls_el.appendChild(label_el);
+};
+
+Demo.prototype._create_modifiers = function ({ el, modifiers, variant, child }) {
+  console.info('Demo._create_modifiers', { el, modifiers, variant });
+  const fragment = document.createDocumentFragment();
+
+  const groups = this._get_modifiers_groups(modifiers);
+
+  Object.keys(groups).forEach(group_name => {
+    fragment.appendChild(this._create_modifier_group({ groups, group_name, variant, child }));
+  });
+
+  /*if (modifiers.length > 7) {
+    createModifiersSelectBox({ fragment, component, opts, variant });
+  } else if (modifiers.length > 1 && group_names.length <= 1) {
+    const selection_controls = node.create({});
+    const fieldset = node.create({type: 'fieldset', classNames: 'ph'});
+    fieldset.classList.add('ph');
+
+    const legend = node.create({type: 'legend', classNames: 'ph'});
+    const input_wrapper_el = node.create({classNames: 'ph input-wrapper'});
+
+    if (group_names && group_names.length) {
+      legend.textContent = humanize(group_names[0]);
+      input_wrapper_el.classList.add(group_names[0]);
+    } else {
+      input_wrapper_el.classList.add('modifiers');
+      legend.textContent = 'Modifiers';
+    }
+    modifiers.forEach(createModifierRadioFactory({ component, opts, selection_controls, variant }));
+    input_wrapper_el.appendChild(fieldset);
+    fieldset.appendChild(legend);
+    fieldset.appendChild(selection_controls);
+
+    fragment.appendChild(input_wrapper_el);
+  } else {
+    // Create separate fieldsets per group
+    const groups = this._get_modifiers_groups(modifiers);
+    Object.keys(groups).forEach(group_name => {
+      const modifiers = groups[group_name];
+      const selection_controls = node.create({});
+      const fieldset = node.create({type: 'fieldset', classNames: 'ph'});
+
+      const legend = node.create({type: 'legend', classNames: 'ph', textContent: humanize(group_name)});
+      const input_wrapper_el = node.create({classNames: `ph input-wrapper ${group_name}`});
+
+      modifiers.forEach(createModifierToggleFactory({ component, opts, selection_controls, variant }));
+      input_wrapper_el.appendChild(fieldset);
+      fieldset.appendChild(legend);
+      fieldset.appendChild(selection_controls);
+
+      fragment.appendChild(input_wrapper_el);
+    });
+  }*/
+
+  el.appendChild(fragment);
+};
+
+Demo.prototype._init_a11y = async function () {
+  this._ally = await new A11y();
+};
+
+Demo.prototype._ally_show_results = function (checks) {
+  if (!isArrayUsable(checks)) return;
+
+  checks.forEach((check, index) => {
+    const { description, help, helpUrl, id, impact, nodes, tags } = check;
+    const _details_el = node.create({
+      type: 'detail',
+      classNames: 'ph detail',
+      attrs: {
+        id: `${id}-${index}`
+      }
+    });
+    const _summary_el = node.create({ type: 'summary', classNames: 'ph summary', textContent: description });
+    const _summary_content = `
+    ${help}
+
+    <a href="${helpUrl}">More information</a>
+    `;
+    _summary_el.innerHTML = _summary_content;
+
+    _details_el.appendChild(_summary_el);
+    this.a11y_el.appendChild(_details_el);
+  });
+};
+
+Demo.prototype._a11y_test = async function () {
+  this._a11y_result = await this._ally.test(this.preview_el.querySelector('*'));
+  console.dir(this._a11y_result);
+
+  const _violations_title_el = node.create({ type: 'h1', classNames: 'ph', textContent: 'Violations' });
+
+  this.a11y_el.appendChild(_violations_title_el);
+
+  if (!isArrayUsable(this._a11y_result.violations)) {
+    const _violations_none_el = node.create({
+      type: 'p',
+      classNames: 'ph',
+      textContent: 'No accessibility violations found'
+    });
+    this.a11y_el.appendChild(_violations_none_el);
+  }
+
+  const _passes_title_el = node.create({ type: 'h1', classNames: 'ph', textContent: 'Passes' });
+
+  this.a11y_el.appendChild(_passes_title_el);
+
+  if (!isArrayUsable(this._a11y_result.passes)) {
+    const _passes_none_el = node.create({ type: 'p', classNames: 'ph', textContent: 'No accessibility checks passed' });
+    this.a11y_el.appendChild(_passes_none_el);
+  } else {
+    this._ally_show_results(this._a11y_result.passes);
+  }
+
+  const _incomplete_title_el = node.create({ type: 'h1', classNames: 'ph', textContent: 'Incomplete' });
+
+  this.a11y_el.appendChild(_incomplete_title_el);
+
+  if (!isArrayUsable(this._a11y_result.incomplete)) {
+    const _incomplete_none_el = node.create({
+      type: 'p',
+      classNames: 'ph',
+      textContent: 'No accessibility checks incompete'
+    });
+    this.a11y_el.appendChild(_incomplete_none_el);
+  }
+};
+
+Demo.prototype._drawer = function () {
+  this.states_form_el = form('states');
+  this.interactions_form_el = form('interactions');
+  this.modifiers_form_el = form('modifiers');
+  this.variants_form_el = form('variants');
+
+  this.configuration_el.appendChild(this.variants_form_el);
+  this.configuration_el.appendChild(this.interactions_form_el);
+  this.configuration_el.appendChild(this.states_form_el);
+  this.configuration_el.appendChild(this.modifiers_form_el);
+
+  this._create_variants_controls();
+  this._create_interactions_controls();
+  this._create_states_controls();
+  this._create_global_modifiers_controls();
+};
+
+Demo.prototype._settings_backgrounds = function () {
+  if (isArrayUsable(this.options.backgrounds)) {
     const fragment = document.createDocumentFragment();
-    const container = document.createElement('div');
-    container.classList.add('ph');
-    container.classList.add('menu-container');
-    container.classList.add('backgrounds');
+    const container = node.create({ classNames: 'ph menu-container backgrounds' });
 
-    const _id = ID();
-    const button = document.createElement('button');
-    button.setAttribute('type', 'button');
-    button.setAttribute('tabindex', '0');
-    button.setAttribute('id', _id);
-    button.setAttribute('aria-haspopup', 'true');
-    button.setAttribute('aria-controls', `menu-${_id}`);
-    button.setAttribute('aria-expanded', 'false');
-    button.setAttribute('aria-label', 'Backgrounds');
-
-    button.classList.add('ph');
-    button.classList.add('button');
-    button.classList.add('backgrounds');
-    button.classList.add('js-settings-menu');
-    button.classList.add('icon');
+    const _id = uniqueID();
+    const button = node.create({
+      type: 'button',
+      classNames: 'ph button backgrounds js-settings-menu icon',
+      attrs: {
+        type: 'button',
+        tabindex: 0,
+        id: _id,
+        'aria-haspopup': true,
+        'aria-controls': `menu-${_id}`,
+        'aria-expanded': false,
+        'aria-label': 'Backgrounds'
+      }
+    });
 
     container.appendChild(button);
 
-    const nav = document.createElement('nav');
+    const nav = node.create({
+      type: 'nav',
+      classNames: 'ph menu right',
+      attrs: {
+        tabindex: '-1',
+        id: `menu-${_id}`,
+        role: 'menu',
+        'aria-labelledby': _id
+      }
+    });
     nav.style.top = '48px';
-    button.setAttribute('tabindex', '-1');
-    nav.setAttribute('id', `menu-${_id}`);
-    nav.setAttribute('role', 'menu');
-    nav.setAttribute('aria-labelledby', _id);
 
-    nav.classList.add('ph');
-    nav.classList.add('menu');
-    nav.classList.add('right');
+    const ul = node.create({ type: 'ul', classNames: 'ph' });
 
-    const ul = document.createElement('ul');
-    ul.classList.add('ph');
-
-    backgrounds.forEach(background => {
-      const li = document.createElement('li');
-      li.classList.add('ph');
-      const action = document.createElement('button');
-      action.setAttribute('type', 'button');
-      action.setAttribute('role', 'menuitem');
-      action.setAttribute('tabindex', '-1');
-      action.classList.add('ph');
+    this.options.backgrounds.forEach((background, index) => {
       const { name, color } = background;
-      action.setAttribute('data-name', name);
-      action.setAttribute('data-color', color);
-      action.innerHTML = `<span class="if" style="border: 1pt solid #dddddd;display:inline-block;height: 24px; width: 24px; border-radius: 100%; background-clip: padding-box;background-color: ${color};margin-right: 8px;"></span> ${name}`;
-      li.appendChild(action);
-      ul.appendChild(li);
-      action.addEventListener('click', e => {
-        const preview = el.closest('.demo').querySelector('.ph.preview');
-        const actionButton = e.target;
-        const color = actionButton.getAttribute('data-color');
-        actionButton.classList.toggle('is-active');
-        const currentBackgroundColor =
-          preview.style.backgroundColor !== '' ? rgb2hex(preview.style.backgroundColor) : '';
-        if (currentBackgroundColor === color) {
-          preview.style.backgroundColor = '';
-          actionButton.setAttribute('aria-selected', false);
-        } else {
-          preview.style.backgroundColor = color;
-          actionButton.setAttribute('aria-selected', true);
+
+      const classNames = classnames.cx('ph', {
+        'is-active': background.default
+      });
+
+      const li = node.create({ type: 'li', classNames: 'ph' });
+      const action = node.create({
+        type: 'button',
+        classNames,
+        attrs: {
+          type: 'button',
+          role: 'menuitem',
+          tabindex: '-1',
+          'data-name': name,
+          'data-color': color,
+          'aria-selected': background.default || index === 0 ? true : false
         }
       });
+
+      action.innerHTML = `<span class="if" style="border: 1pt solid rgba(209,217,230,.5);display:inline-block;height: 18px; width: 18px; border-radius: 100%; background-clip: padding-box;background-color: ${color};margin-right: 8px;"></span> ${name}`;
+
+      li.appendChild(action);
+      ul.appendChild(li);
+
+      const _handle_background_action_event = e => {
+        const actionButton = e.target;
+        const color = actionButton.getAttribute('data-color');
+        actionButton
+          .closest('ul')
+          .querySelectorAll('button')
+          .forEach(button => {
+            button.classList.remove('is-active');
+            button.setAttribute('aria-expanded', false);
+          });
+        actionButton.classList.add('is-active');
+        const currentBackgroundColor =
+          this.preview_el.style.backgroundColor !== '' ? rgb2hex(this.preview_el.style.backgroundColor) : '';
+        if (currentBackgroundColor === color) {
+          this.preview_el.style.backgroundColor = '';
+          actionButton.setAttribute('aria-selected', false);
+        } else {
+          this.preview_el.style.backgroundColor = color;
+          actionButton.setAttribute('aria-selected', true);
+        }
+      };
+
+      // action.addEventListener('keyup', e => {
+      //   if (e.key == 'Enter') {
+      //     _handle_background_action_event(e);
+      //   }
+      // });
+      action.addEventListener('click', _handle_background_action_event);
     });
 
     nav.appendChild(ul);
     container.appendChild(nav);
     fragment.appendChild(container);
-    el.appendChild(fragment);
+    this.header_el.appendChild(fragment);
   }
 };
 
-const setHeader = (component, el, opts) => {
-  if (opts && component) {
-    const { backgrounds } = opts;
-    if (backgrounds) {
-      createBackgrounds(el, backgrounds);
-    }
-  }
-};
-const updateHTML = () => {
-  initHtml();
-};
-const initPrism = () => {
-  if (!window.Prism) {
-    const link = document.createElement('link');
+Demo.prototype._root = function (el) {
+  let root_el = el;
+  console.log(el);
+  if (!root_el) {
+    root_el = document.createElement('div');
 
-    // set properties of link tag
-    link.href = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.22.0/themes/prism-solarizedlight.min.css';
-    link.rel = 'stylesheet';
-    link.type = 'text/css';
-
-    // append link element to html
-    document.body.appendChild(link);
-    const script = document.createElement('script');
-    script.onload = function () {
-      window.Prism.highlightAll();
-    };
-    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.22.0/prism.min.js';
-
-    document.head.appendChild(script);
+    classnames.set(root_el, 'ph demo is-embedded');
+    document.body.appendChild(root_el);
   } else {
-    window.Prism.highlightAll();
+    classnames.set(root_el, 'ph demo');
   }
-};
-const initHtml = async () => {
-  const html = document.querySelector('.ph.html');
-  const preview = document.querySelector('.ph.preview');
-
-  if (!html || !preview) return;
-
-  const _html = clear(html);
-
-  const code = await processHTML(preview.innerHTML);
-
-  if (!code || (code && code.length === '')) return;
-
-  const preTag = document.createElement('pre');
-  preTag.classList.add('language-html');
-
-  const codeTag = document.createElement('code');
-  codeTag.innerHTML = code
-    .replace(/( data-textcontent=['"])([^'"]+['"])/, '')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
-
-  preTag.appendChild(codeTag);
-  _html.appendChild(preTag);
-  initPrism();
+  console.log(root_el);
+  return root_el;
 };
 
-const setDefaultUI = opts => {
-  let el;
-  el = document.querySelector('.ph.demo');
-  if (!el) {
-    el = document.createElement('div');
-    el.classList.add('ph');
-    el.classList.add('demo');
+Demo.prototype._markup = function () {
+  const fragment = document.createRange().createContextualFragment(this.options.markup);
+  // We assume that if ONE component is given, that is
+  // the component we refer to.
+  // If more than one component is given, we assume
+  // that it is the FIRST component given that is used for modifiers
+  this.component = fragment.firstChild;
 
-    document.body.appendChild(el);
-  }
+  this.component.textContent = this.options.label;
 
-  const container = document.createElement('div');
-  container.classList.add('ph');
-  container.classList.add('container');
-
-  const preview = document.createElement('div');
-  preview.classList.add('ph');
-  preview.classList.add('preview');
-  preview.classList.add('is-active');
-  if (!opts.ui) {
-    preview.classList.add('no-ui');
-  }
-  if (opts.ui) {
-    const configuration = document.createElement('div');
-    configuration.classList.add('ph');
-    configuration.classList.add('configuration');
-
-    const header = document.createElement('div');
-    header.classList.add('ph');
-    header.classList.add('header');
-    if (opts.html) {
-      const html = document.createElement('div');
-      html.classList.add('ph');
-      html.classList.add('html');
-      container.appendChild(html);
-
-      const htmlButton = document.createElement('button');
-      const previewButton = document.createElement('button');
-      htmlButton.classList.add('ph');
-      htmlButton.classList.add('button');
-      htmlButton.classList.add('text');
-      htmlButton.textContent = 'html';
-      htmlButton.addEventListener('click', e => {
-        const button = e.target;
-        const html = document.querySelector('.ph.html');
-        if (!html.classList.contains('is-active')) {
-          html.classList.add('is-active');
-          button.classList.add('is-active');
-          preview.classList.remove('is-active');
-          previewButton.classList.remove('is-active');
-          initHtml();
-        }
-      });
-      previewButton.classList.add('ph');
-      previewButton.classList.add('button');
-      previewButton.classList.add('text');
-      previewButton.classList.add('is-active');
-      previewButton.textContent = 'preview';
-      previewButton.addEventListener('click', e => {
-        const button = e.target;
-        if (!preview.classList.contains('is-active')) {
-          const html = document.querySelector('.ph.html');
-          preview.classList.add('is-active');
-          button.classList.add('is-active');
-          html.classList.remove('is-active');
-          htmlButton.classList.remove('is-active');
-        }
-      });
-
-      header.appendChild(previewButton);
-      header.appendChild(htmlButton);
-    }
-    container.appendChild(configuration);
-    container.appendChild(header);
-  }
-
-  container.appendChild(preview);
-
-  el.appendChild(container);
-  return el;
-};
-const loadFonts = () => {
-  const preconnect = document.createElement('link');
-  const font = document.createElement('link');
-
-  preconnect.rel = 'preconnect';
-  preconnect.href = 'https://fonts.gstatic.com';
-
-  font.href =
-    'https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700&display=swap';
-  font.rel = 'stylesheet';
-  font.type = 'text/css';
-
-  // append link element to html
-  document.body.appendChild(preconnect);
-  document.body.appendChild(font);
-};
-const loadCSSFile = opts => {
-  if (opts.css && opts.css !== '') {
-    const link = document.createElement('link');
-
-    // set properties of link tag
-    link.href = opts.css;
-    link.rel = 'stylesheet';
-    link.type = 'text/css';
-
-    // append link element to html
-    document.body.appendChild(link);
-  }
-};
-
-const loadJSFile = opts => {
-  if (opts.js && opts.js !== '') {
-    const script = document.createElement('script');
-
-    script.src = opts.js;
-
-    document.head.appendChild(script);
-  }
-};
-
-const getConfiguration = cfg => {
-  if (cfg) return cfg;
-
-  const jsCfgEl = document.querySelector('script.js-demo-config');
-  if (!jsCfgEl) throw 'No js config element found';
-
-  const configHTML = jsCfgEl.innerHTML;
-
-  const config = JSON.parse(configHTML);
-  return config;
-};
-const init = cfg => {
-  cfg = cfg || getConfiguration(cfg);
-  const options = setDefaultOpts(cfg);
-  const el = setDefaultUI(options);
-  loadFonts();
-  loadCSSFile(options);
-  loadJSFile(options);
-
-  const preview = el.querySelector('.ph.preview');
-
-  const { markup, wrapper } = options;
-  if (markup && markup !== '') {
-    // Make sure there are no whitespace in the markup,
-    // Since we don't want text nodes
-    const sanitizedMarkup = markup.trim();
-    const fragment = document.createRange().createContextualFragment(sanitizedMarkup);
-    const component = fragment.firstChild;
-    if (wrapper) {
-      const { el, classNames } = wrapper;
-      if (el && el !== '') {
-        const wrapperElement = document.createElement(el);
-        setClassNames(wrapperElement, classNames);
-        wrapperElement.appendChild(fragment);
-        preview.appendChild(wrapperElement);
-      } else {
-        preview.appendChild(fragment);
-      }
+  if (this.options.wrapper) {
+    const { el, classNames } = this.options.wrapper;
+    if (el && el !== '') {
+      this.wrapper_el = node.create({ type: el, classNames });
+      this.wrapper_el.appendChild(fragment);
+      this.preview_el.appendChild(this.wrapper_el);
     } else {
-      preview.appendChild(fragment);
-    }
-    if (options.preset) {
-      setPresetDefaults(component, options);
-    } else {
-      setDefaultBackground(component, options);
-      setDefaultClassNames(component, options);
-      setDefaultLabel(component, options);
-      if (options.ui) {
-        const configuration = el.querySelector('.ph.configuration');
-        const header = el.querySelector('.ph.header');
-        setHeader(component, header, options);
-        setConfigurationDrawer(component, configuration, options);
-        settingsMenuInit();
-      }
+      this.preview_el.appendChild(fragment);
     }
   } else {
-    console.info('[init]: No markup found. Please supply markup');
+    this.preview_el.appendChild(fragment);
   }
 };
 
-export default init;
+Demo.prototype._preview_button_on_click = function (e) {
+  const button = e.target;
+  if (!this.preview_el.classList.contains('is-active')) {
+    this.preview_el.classList.add('is-active');
+    button.classList.add('is-active');
+    this.a11y_el.classList.remove('is-active');
+    this.a11y_button_el.classList.remove('is-active');
+    this.html_el.classList.remove('is-active');
+    this.html_button_el.classList.remove('is-active');
+    this._is_a11y_pane_active = false;
+    this._is_html_pane_active = false;
+    this._is_preview_pane_active = true;
+    setTimeout(
+      function () {
+        this._speccer();
+      }.bind(this),
+      300
+    );
+  }
+};
 
-init();
+Demo.prototype._html_button_on_click = function (e) {
+  const button = e.target;
+  if (!this.html_el.classList.contains('is-active')) {
+    this.html_el.classList.add('is-active');
+    button.classList.add('is-active');
+    this.preview_el.classList.remove('is-active');
+    this.preview_button_el.classList.remove('is-active');
+    this.a11y_el.classList.remove('is-active');
+    this.a11y_button_el.classList.remove('is-active');
+    this._is_a11y_pane_active = false;
+    this._is_html_pane_active = true;
+    this._is_preview_pane_active = false;
+    this._set_html(true);
+  }
+};
 
-/*
-@todo Need support for wide components
-@todo Need support for custom js
-@todo Need support for custom events for modifiers
-*/
+Demo.prototype._a11y_button_on_click = function (e) {
+  const button = e.target;
+  if (!this.a11y_el.classList.contains('is-active')) {
+    this.a11y_el.classList.add('is-active');
+    button.classList.add('is-active');
+    this.preview_el.classList.remove('is-active');
+    this.preview_button_el.classList.remove('is-active');
+    this.html_el.classList.remove('is-active');
+    this.html_button_el.classList.remove('is-active');
+    this._is_a11y_pane_active = true;
+    this._is_html_pane_active = false;
+    this._is_preview_pane_active = false;
+  }
+  this._a11y_test();
+};
+
+Demo.prototype._init_preview_button_click = function () {
+  this.preview_button_el.removeEventListener('click', this._preview_button_on_click.bind(this));
+  this.preview_button_el.addEventListener('click', this._preview_button_on_click.bind(this));
+};
+
+Demo.prototype._init_html_button_click = function () {
+  this.html_button_el.removeEventListener('click', this._html_button_on_click.bind(this));
+  this.html_button_el.addEventListener('click', this._html_button_on_click.bind(this));
+};
+
+Demo.prototype._init_a11y_button_click = function () {
+  this.a11y_button_el.removeEventListener('click', this._a11y_button_on_click.bind(this));
+  this.a11y_button_el.addEventListener('click', this._a11y_button_on_click.bind(this));
+};
+
+Demo.prototype._ui = function () {
+  stylesheet({ href: 'https://fonts.gstatic.com', rel: 'preconnect' });
+  stylesheet({
+    href:
+      'https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700&display=swap',
+    type: 'text/css'
+  });
+
+  if (this.options.js !== '') {
+    script({ src: this.options.js });
+  }
+
+  if (this.options.css !== '') {
+    stylesheet({ href: this.options.css });
+  }
+
+  this.container_el = node.create({ classNames: 'ph container' });
+  this.preview_el = node.create({ classNames: 'ph preview is-active' });
+  this.a11y_el = node.create({ classNames: 'ph a11y' });
+  if (this.options.html) {
+    this.html_el = node.create({ classNames: 'ph html' });
+    this.root_el.appendChild(this.html_el);
+  }
+
+  if (this.options.embed) {
+    document.querySelector('html').classList.add('ph');
+    document.querySelector('body').classList.add('ph');
+  }
+
+  if (!this.options.ui) {
+    this.preview_el.classList.add('no-ui');
+  }
+
+  if (this.options.ui) {
+    this.configuration_el = node.create({ classNames: 'ph configuration' });
+    this.header_el = node.create({ classNames: 'ph header' });
+
+    if (this.options.html) {
+      this.preview_button_el = node.create({
+        type: 'button',
+        classNames: 'ph button text is-active',
+        textContent: 'preview'
+      });
+      this.html_button_el = node.create({ type: 'button', classNames: 'ph button text', textContent: 'html' });
+      this.a11y_button_el = node.create({ type: 'button', classNames: 'ph button text', textContent: 'accessibility' });
+
+      this._init_html_button_click();
+      this._init_preview_button_click();
+      this._init_a11y_button_click();
+
+      this.header_el.appendChild(this.preview_button_el);
+      this.header_el.appendChild(this.html_button_el);
+      this.header_el.appendChild(this.a11y_button_el);
+    }
+    this.container_el.appendChild(this.configuration_el);
+    this.container_el.appendChild(this.header_el);
+  }
+
+  this.container_el.appendChild(this.preview_el);
+
+  if (this.options.html) {
+    this.container_el.appendChild(this.html_el);
+  }
+
+  this.root_el.appendChild(this.container_el);
+};
+export default Demo;

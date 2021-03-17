@@ -9,10 +9,10 @@ export default [
   {
     input: 'src/index.js',
     output: {
-      name: 'index',
+      name: 'Demo',
       file: pkg.browser,
       format: 'umd',
-      // plugins: [terser()],
+      plugins: [terser()],
       assetFileNames: '[name][extname]',
       globals: {
         '@babel/runtime/regenerator': 'regeneratorRuntime',

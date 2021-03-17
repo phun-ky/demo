@@ -1,0 +1,242 @@
+
+
+
+.ph.selection-controls
+  font-family "Roboto", "Helvetica Neue", Helvetica, sans-serif
+  font-weight 400
+  font-size 1rem
+  flex-direction column
+  align-items flex-start
+  display flex
+  flex-wrap wrap
+  position relative
+  justify-content center
+  min-height 28px
+
+.ph.selection-controls.horizontal
+  flex-direction row
+  align-items center
+  justify-content flex-start
+
+.ph.selection-controls > label
+  display flex
+  flex-grow 0
+  padding 0
+  position relative
+  margin-bottom 1rem
+  width 100%
+
+.ph.selection-controls.horizontal > label
+  margin-bottom 0
+  margin-right 1rem
+  width auto
+
+.ph.selection-controls:focus-within [type="radio"]:disabled + label,
+.ph.selection-controls:focus-within [type="checkbox"]:disabled + label
+  opacity 0.5
+  pointer-events none
+
+.ph.selection-control.standalone[type="radio"] + label,
+.ph.selection-control.standalone[type="checkbox"] + label
+  height 28px
+  width 28px
+
+.ph.selection-control.standalone[type="radio"] + label:before,
+.ph.selection-control.standalone[type="checkbox"] + label:before
+  margin-right 0
+
+.ph.selection-control[type="radio"] + label:before
+  border-radius 100%
+
+
+.ph.selection-control[type="radio"]:checked + label:after
+  opacity 1
+
+.ph.selection-control[type="radio"] + label:after
+  opacity 0
+  transition all 0.3s cubic-bezier(0.4, 0, 0.2, 1)
+  content ""
+  z-index 3
+  flex-shrink 0
+  flex-grow 0
+  margin 0
+  display block
+  overflow hidden
+  background #2872ff
+  position absolute
+  height 12px
+  width 12px
+  border-radius 100%
+  top 50%
+  transform translateY(-50%)
+  left 6px
+  box-shadow -2px -2px 6px white
+
+.ph.selection-control[type="radio"]:disabled + label,
+.ph.selection-control[type="checkbox"]:disabled + label
+  opacity 0.5
+  pointer-events none
+
+
+.ph.selection-control[type="checkbox"] + label:before
+  border-radius 4px
+  background-repeat no-repeat
+  background-position center center
+  background-size 12px 12px
+
+
+.ph.selection-control[type="checkbox"]:checked + label:before
+  background-color #2872ff
+  box-shadow none
+  background-image url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ctitle%3Echeck%3C/title%3E%3Cg class=%27nc-icon-wrapper%27 stroke-linecap=%27square%27 stroke-linejoin=%27miter%27 stroke-width=%273%27 fill=%27white%27 stroke=%27white%27%3E%3Cpolyline points=%272 16 11 25 30 6%27 fill=%27none%27 stroke=%27white%27 stroke-miterlimit=%2710%27/%3E%3C/g%3E%3C/svg%3E")
+
+.ph.selection-control[type="radio"],
+.ph.selection-control[type="checkbox"]
+  flex-grow 0
+  height 0
+  left -1000px
+  opacity 0
+  padding 0
+  position absolute
+  width 0
+
+.ph.selection-control[type="radio"] + label,
+.ph.selection-control[type="checkbox"] + label
+  display flex
+  align-items center
+  cursor pointer
+  font-size 1rem
+  font-family "Roboto", "Helvetica Neue", Helvetica, sans-serif
+  font-weight 400
+
+.ph.selection-control[type="radio"] + label:before,
+.ph.selection-control[type="checkbox"] + label:before
+  transition all 0.3s cubic-bezier(0.4, 0, 0.2, 1)
+  content ""
+  display block
+  margin-right 0.5rem
+  height 24px
+  width 24px
+  flex-shrink 0
+  flex-grow 0
+  background-color #ecf0f3
+  box-shadow inset 4px 4px 6px #d1d9e6
+  border 1px solid rgba(209, 217, 230, 0.5)
+
+.ph.toggle[type="checkbox"]
+  flex-grow 0
+  height 0
+  left -1000px
+  opacity 0
+  padding 0
+  position absolute
+  width 0
+
+
+.ph.toggle[type="checkbox"] + label
+  display flex
+  align-items center
+  cursor pointer
+  font-size 1rem
+  font-family "Roboto", sans-serif
+  font-weight 400
+  margin-bottom 1rem
+
+.ph.toggle[type="checkbox"]:disabled + label,
+.ph.toggle[type="checkbox"].is-disabled + label
+  opacity 0.5
+  pointer-events none
+
+
+.ph.toggle[type="checkbox"] + label
+  padding-right 4rem
+
+.ph.toggle[type="checkbox"] + label:after
+  content ""
+  z-index 1
+  display block
+  overflow hidden
+  margin-bottom 0
+  cursor pointer
+  height 24px
+  width 44px
+  position absolute
+  top 50%
+  transform translateY(-50%)
+  bottom 0
+  right 0
+  padding 0
+  line-height 24px
+  border-radius 24px
+  background-color #ecf0f3
+  transition all 0.3s cubic-bezier(0.4, 0, 0.2, 1)
+  box-shadow inset 4px 4px 6px #d1d9e6
+  border 1px solid rgba(209, 217, 230, 0.5)
+
+.ph.toggle[type="checkbox"] + label:before
+  content ""
+  z-index 2
+  display block
+  width 18px
+  height 18px
+  flex-shrink 0
+  flex-grow 0
+  margin 0
+  background-color #fff
+  position absolute
+  top 50%
+  transform translateY(-50%)
+  bottom 0
+  right 22px
+  border-radius 100%
+  transition all 0.3s cubic-bezier(0.4, 0, 0.2, 1)
+
+.ph.toggle[type="checkbox"]:checked + label:before
+  right 4px
+  background-color #2872ff
+
+
+.ph.selection-control[type="radio"]:focus + label,
+.ph.selection-control[type="checkbox"]:focus + label,
+.ph.selection-control[type="radio"].is-focused + label,
+.ph.selection-control[type="checkbox"].is-focused + label
+  outline 2px dashed #2872ff
+  outline-offset 8px
+
+.ph.toggle[type="checkbox"]:focus + label,
+.ph.toggle[type="checkbox"].is-focused + label
+  outline 2px dashed #2872ff
+  outline-offset 8px
+
+
+select.ph
+  background-color transparent
+  border none
+  height 28px
+  padding 0 1.25rem 0 0
+  color #000
+  box-shadow none
+  -moz-appearance none
+  -webkit-appearance none
+  appearance none
+  background-image url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ctitle%3Esmall down%3C/title%3E%3Cg class=%27nc-icon-wrapper%27 stroke-linecap=%27square%27 stroke-linejoin=%27miter%27 stroke-width=%272%27 fill=%27%23331e11%27 stroke=%27%23331e11%27%3E%3Cpolyline fill=%27none%27 stroke=%27%23331e11%27 stroke-miterlimit=%2710%27 points=%2722,13 16,19 10,13 %27/%3E%3C/g%3E%3C/svg%3E")
+  background-repeat no-repeat
+  background-size 20px 20px
+  background-position right 0.75rem center
+  width 100%
+
+
+select.ph.is-disabled,
+select.ph:disabled
+  opacity 0.5
+  pointer-events none
+
+select.ph.is-invalid,
+select.ph[invalid]
+  border-color red
+  box-shadow none
+  border-width 2pt
+  background-color #e1e1e1
+
+select::-ms-expand
+  display none
