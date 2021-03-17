@@ -767,7 +767,7 @@ Demo.prototype._ally_show_results = function (checks) {
     const _details_content = `
     ${help}
 
-    <a href="${helpUrl}">More information</a>
+    <a href="${helpUrl}" rel="noreferrer noopener" target="_blank" class="ph">More information</a>
     `;
     _details_el.innerHTML = _details_content;
 
