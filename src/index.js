@@ -757,19 +757,19 @@ Demo.prototype._ally_show_results = function (checks) {
   checks.forEach((check, index) => {
     const { description, help, helpUrl, id, impact, nodes, tags } = check;
     const _details_el = node.create({
-      type: 'detail',
+      type: 'details',
       classNames: 'ph detail',
       attrs: {
         id: `${id}-${index}`
       }
     });
     const _summary_el = node.create({ type: 'summary', classNames: 'ph summary', textContent: description });
-    const _summary_content = `
+    const _details_content = `
     ${help}
 
     <a href="${helpUrl}">More information</a>
     `;
-    _summary_el.innerHTML = _summary_content;
+    _details_el.innerHTML = _details_content;
 
     _details_el.appendChild(_summary_el);
     this.a11y_el.appendChild(_details_el);
@@ -780,7 +780,7 @@ Demo.prototype._a11y_test = async function () {
   this._a11y_result = await this._ally.test(this.preview_el.querySelector('*'));
   console.dir(this._a11y_result);
 
-  const _violations_title_el = node.create({ type: 'h1', classNames: 'ph', textContent: 'Violations' });
+  const _violations_title_el = node.create({ type: 'h2', classNames: 'ph title', textContent: 'Violations' });
 
   this.a11y_el.appendChild(_violations_title_el);
 
@@ -793,7 +793,7 @@ Demo.prototype._a11y_test = async function () {
     this.a11y_el.appendChild(_violations_none_el);
   }
 
-  const _passes_title_el = node.create({ type: 'h1', classNames: 'ph', textContent: 'Passes' });
+  const _passes_title_el = node.create({ type: 'h2', classNames: 'ph title', textContent: 'Passes' });
 
   this.a11y_el.appendChild(_passes_title_el);
 
@@ -804,7 +804,7 @@ Demo.prototype._a11y_test = async function () {
     this._ally_show_results(this._a11y_result.passes);
   }
 
-  const _incomplete_title_el = node.create({ type: 'h1', classNames: 'ph', textContent: 'Incomplete' });
+  const _incomplete_title_el = node.create({ type: 'h2', classNames: 'ph title', textContent: 'Incomplete' });
 
   this.a11y_el.appendChild(_incomplete_title_el);
 
@@ -1103,6 +1103,7 @@ Demo.prototype._ui = function () {
 
   if (this.options.html) {
     this.container_el.appendChild(this.html_el);
+    this.container_el.appendChild(this.a11y_el);
   }
 
   this.root_el.appendChild(this.container_el);

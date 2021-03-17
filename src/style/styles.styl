@@ -70,7 +70,7 @@ legend.ph
     align-items center
     background transparent
     flex-shrink 0
-    position fixed
+    position absolute
     top 0
     z-index 4
     left 0
@@ -106,7 +106,8 @@ legend.ph
     border-left 1px solid rgba(209,217,230,.2)
 
 .ph.demo.is-embedded
-  & .configuration
+  & .configuration,
+  & .header
     position fixed
 
 @media screen and (min-width: 720px)
@@ -192,6 +193,34 @@ form.ph
     width 100%
     padding 0
 
+.ph.a11y
+  flex-direction column
+  align-items flex-start
+  justify-content flex-start
+  padding-left 2.5rem
+  padding-top 6rem
+
+  & .title
+    font-size 24px
+    font-weight 300
+    padding-top 4px
+    margin-bottom 1rem
+
+  & details
+    margin-bottom 1rem
+    margin-top 1rem
+    border-bottom 1px solid rgba(209,217,230,.8)
+    padding 1rem
+
+    & summary
+      margin-left -1rem
+      margin-right -1rem
+
+  & details[open]
+    & summary
+      margin-bottom 1rem;
+      border-bottom 1px solid rgba(209,217,230,.8)
+      padding-bottom 8px
 
 .ph.button.text
   text-transform uppercase
@@ -213,6 +242,8 @@ form.ph
     opacity 1
   + .ph.button.text
     margin-left 0.5rem
+
+
 
 
 .ph.html pre
