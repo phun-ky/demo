@@ -781,6 +781,7 @@ Demo.prototype._ally_show_results = function (checks) {
 };
 
 Demo.prototype._a11y_test = async function () {
+  this.a11y_el = node.clear(this.a11y_el);
   this._a11y_result = await this._ally.test(this.preview_el.querySelector('*'));
   console.dir(this._a11y_result);
 
