@@ -780,6 +780,13 @@ Demo.prototype._ally_show_results = function (checks) {
   });
 };
 
+Demo.prototype.destroy = function (add_markup = false) {
+  this.root_el = node.clear(this.root_el);
+  if (add_markup) {
+    this.root_el.innerHTML = this.options.markup;
+  }
+};
+
 Demo.prototype._a11y_test = async function () {
   this.a11y_el = node.clear(this.a11y_el);
   this._a11y_result = await this._ally.test(this.preview_el.querySelector('*'));
