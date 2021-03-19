@@ -432,6 +432,10 @@ Demo.prototype._init = function (options, el) {
   // Set initial background color
   this.preview_el.style.backgroundColor = this.options.background_color;
 
+  if (this.options.background_color !== '#F7F8FF') {
+    this.preview_el.style.backgroundImage = 'none';
+  }
+
   // Only display component
   if (this.options.preset) {
     this._initial();
@@ -859,7 +863,7 @@ Demo.prototype._settings_backgrounds = function () {
 
     const nav = node.create({
       type: 'nav',
-      classNames: 'ph menu right',
+      classNames: 'ph menu',
       attrs: {
         tabindex: '-1',
         id: `menu-${_id}`,
@@ -867,7 +871,6 @@ Demo.prototype._settings_backgrounds = function () {
         'aria-labelledby': _id
       }
     });
-    nav.style.top = '48px';
 
     const ul = node.create({ type: 'ul', classNames: 'ph' });
 
@@ -930,7 +933,7 @@ Demo.prototype._settings_backgrounds = function () {
     nav.appendChild(ul);
     container.appendChild(nav);
     fragment.appendChild(container);
-    this.header_el.appendChild(fragment);
+    this.container_el.appendChild(fragment);
   }
 };
 
@@ -940,7 +943,7 @@ Demo.prototype._root = function (el) {
   if (!root_el) {
     root_el = document.createElement('div');
 
-    classnames.set(root_el, 'ph demo is-embedded');
+    classnames.set(root_el, 'ph demo is-not-embedded');
     document.body.appendChild(root_el);
   } else {
     classnames.set(root_el, 'ph demo');

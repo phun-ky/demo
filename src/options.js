@@ -81,7 +81,7 @@ Options.prototype._get_default_background_color = function () {
       return backgrounds[0].color;
     }
   }
-  return '#ecf0f3';
+  return '#F7F8FF';
 };
 Options.prototype._get_markup = function () {
   const markup = this._get_characters('markup').trim();

@@ -57,9 +57,9 @@ SettingsMenu.prototype._close_menu = function () {
 SettingsMenu.prototype._adjust_placement = debounce(function () {
   const _trigger_el_rect = this._trigger_el.getBoundingClientRect();
   const _settings_menu_holder_el_rect = this._settings_menu_holder_el.getBoundingClientRect();
-  const _top = _settings_menu_holder_el_rect.top - _trigger_el_rect.top + _trigger_el_rect.height + 8 + 'px';
+  const _bottom = _settings_menu_holder_el_rect.bottom - _trigger_el_rect.bottom + _trigger_el_rect.height + 8 + 'px';
 
-  styles.add(this._settings_menu_el, { top: _top });
+  styles.add(this._settings_menu_el, { bottom: _bottom });
 }, 300);
 
 SettingsMenu.prototype._open_menu = function () {
