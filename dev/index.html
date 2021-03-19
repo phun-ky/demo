@@ -14,6 +14,112 @@
   <body class="ph">
     <script src="/assets/demo.umd.js" type="text/javascript"></script>
     <script type="text/javascript">
+      const input = {
+        position: 'center',
+        name: 'Input',
+        html: 'true',
+        css: 'https://if-vid-brand-cdn.azureedge.net/ifdesignsystem.min.css',
+        js: 'https://unpkg.com/what-input@5.2.10/dist/what-input.js',
+        markup: `<input placeholder="Placeholder text" name="identifier" id="identifier" type="text" class="if input-field">
+        <label class="if" for="identifier">Label text</label>
+        <span class="if input-help">
+          Help text
+        </span>
+        <span class="if input-error">
+          Error/Validation text
+        </span>`,
+        wrapper: {
+          el: 'div',
+          classNames: 'if input-wrapper',
+        },
+        backgrounds: [
+          {
+            name: 'BE 5',
+            color: '#faf9f7',
+          },
+          {
+            name: 'BE 4',
+            color: '#f6f3f0',
+          },
+          {
+            name: 'BE 3',
+            default: true,
+            color: '#f1ece8',
+          },
+          {
+            name: 'BE 2',
+            color: '#ede6e1',
+          },
+          {
+            name: 'BE 1',
+            color: '#e8e0d9',
+          },
+        ],
+        variants: [
+          {
+            name: 'Input field',
+            classNames: 'if input-field',
+          },
+        ],
+        states: [
+          {
+            name: 'Disabled',
+            attributes: {
+              disabled: 'disabled',
+            },
+          },
+          {
+            name: 'Closed',
+            classNames: 'is-closed',
+          },
+          {
+            name: 'Invalid',
+            attributes: {
+              invalid: 'invalid',
+            },
+          },
+        ],
+        modifiers: [
+          {
+            name: 'Default',
+            group: 'mandatory',
+            classNames: '',
+          },
+          {
+            name: 'Required',
+            group: 'mandatory',
+            attributes: {
+              required: 'required',
+            },
+          },
+          {
+            name: 'Optional',
+            group: 'mandatory',
+            classNames: 'is-optional',
+          },
+          {
+            name: 'With icon',
+            group: 'icon',
+            classNames: 'icon symbol bulb-on',
+            modifiers: [
+              {
+                name: 'Trailing',
+                group: 'icon-trailing',
+                classNames: 'trailing',
+              },
+            ],
+          },
+        ],
+        interactions: [
+          {
+            name: 'Focused',
+            classNames: 'is-focused',
+            previewAttributes: {
+              'data-whatinput': 'keyboard',
+            },
+          },
+        ],
+      };
       const button = {
         position: 'center',
         name: 'Button',
@@ -133,7 +239,7 @@
           },
         ],
       };
-      const demo = new window.Demo.default(button);
+      const demo = new window.Demo.default(input);
     </script>
   </body>
 </html>
